@@ -63,6 +63,22 @@ region = Rect2(32, 0, 32, 48)
 atlas = ExtResource("texture_characters")
 region = Rect2(64, 0, 32, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_house_wall"]
+atlas = ExtResource("texture_magecity")
+region = Rect2(144, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_house_roof"]
+atlas = ExtResource("texture_magecity")
+region = Rect2(144, 64, 64, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_house_door"]
+atlas = ExtResource("texture_magecity")
+region = Rect2(208, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_house_window"]
+atlas = ExtResource("texture_magecity")
+region = Rect2(208, 48, 24, 24)
+
 [node name="SpawnPoint" type="Node2D"]
 script = ExtResource("1_spawn_script")
 
@@ -151,6 +167,75 @@ position = Vector2(0, -12)
 shape = SubResource("RectangleShape2D_platform_right")
 
 [node name="Decorations" type="Node2D" parent="."]
+
+[node name="House01" type="Node2D" parent="Decorations"]
+position = Vector2(-500, 220)
+
+[node name="House01_Wall" type="Sprite2D" parent="Decorations/House01"]
+texture = SubResource("AtlasTexture_house_wall")
+position = Vector2(0, -32)
+
+[node name="House01_Roof" type="Sprite2D" parent="Decorations/House01"]
+texture = SubResource("AtlasTexture_house_roof")
+position = Vector2(0, -80)
+
+[node name="House01_Door" type="Sprite2D" parent="Decorations/House01"]
+texture = SubResource("AtlasTexture_house_door")
+position = Vector2(0, -24)
+
+[node name="House01_Window" type="Sprite2D" parent="Decorations/House01"]
+texture = SubResource("AtlasTexture_house_window")
+position = Vector2(-20, -48)
+
+[node name="House01_Window2" type="Sprite2D" parent="Decorations/House01"]
+texture = SubResource("AtlasTexture_house_window")
+position = Vector2(20, -48)
+
+[node name="House02" type="Node2D" parent="Decorations"]
+position = Vector2(-50, 180)
+
+[node name="House02_Wall" type="Sprite2D" parent="Decorations/House02"]
+texture = SubResource("AtlasTexture_house_wall")
+position = Vector2(0, -32)
+
+[node name="House02_Roof" type="Sprite2D" parent="Decorations/House02"]
+texture = SubResource("AtlasTexture_house_roof")
+position = Vector2(0, -80)
+
+[node name="House02_Door" type="Sprite2D" parent="Decorations/House02"]
+texture = SubResource("AtlasTexture_house_door")
+position = Vector2(0, -24)
+
+[node name="House02_Window" type="Sprite2D" parent="Decorations/House02"]
+texture = SubResource("AtlasTexture_house_window")
+position = Vector2(-20, -48)
+
+[node name="House02_Window2" type="Sprite2D" parent="Decorations/House02"]
+texture = SubResource("AtlasTexture_house_window")
+position = Vector2(20, -48)
+
+[node name="House03" type="Node2D" parent="Decorations"]
+position = Vector2(520, 200)
+
+[node name="House03_Wall" type="Sprite2D" parent="Decorations/House03"]
+texture = SubResource("AtlasTexture_house_wall")
+position = Vector2(0, -32)
+
+[node name="House03_Roof" type="Sprite2D" parent="Decorations/House03"]
+texture = SubResource("AtlasTexture_house_roof")
+position = Vector2(0, -80)
+
+[node name="House03_Door" type="Sprite2D" parent="Decorations/House03"]
+texture = SubResource("AtlasTexture_house_door")
+position = Vector2(0, -24)
+
+[node name="House03_Window" type="Sprite2D" parent="Decorations/House03"]
+texture = SubResource("AtlasTexture_house_window")
+position = Vector2(-20, -48)
+
+[node name="House03_Window2" type="Sprite2D" parent="Decorations/House03"]
+texture = SubResource("AtlasTexture_house_window")
+position = Vector2(20, -48)
 
 [node name="Tree01" type="Node2D" parent="Decorations"]
 position = Vector2(-450, 288)

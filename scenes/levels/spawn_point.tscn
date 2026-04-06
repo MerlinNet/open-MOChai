@@ -1,0 +1,246 @@
+[gd_scene load_steps=8 format=3 uid="uid://spawn_point_scene"]
+
+[ext_resource type="Script" path="res://scripts/levels/spawn_point.gd" id="1_spawn_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1280, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform_left"]
+size = Vector2(200, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform_right"]
+size = Vector2(200, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
+size = Vector2(40, 600)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_right"]
+size = Vector2(40, 600)
+
+[node name="SpawnPoint" type="Node2D"]
+script = ExtResource("1_spawn_script")
+
+[node name="WorldEnvironment" type="CanvasModulate" parent="."]
+color = Color(0.85, 0.9, 1.0, 1)
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sky" type="ColorRect" parent="Background"]
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.35, 0.55, 0.85, 1)
+z_index = -10
+
+[node name="Ground" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(0, 300)
+
+[node name="GroundVisual" type="ColorRect" parent="Ground"]
+offset_left = -640.0
+offset_top = -20.0
+offset_right = 640.0
+offset_bottom = 300.0
+color = Color(0.25, 0.55, 0.25, 1)
+
+[node name="GroundCollision" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(-620, 0)
+
+[node name="WallLeftVisual" type="ColorRect" parent="WallLeft"]
+offset_left = -20.0
+offset_top = -300.0
+offset_right = 20.0
+offset_bottom = 300.0
+color = Color(0.3, 0.2, 0.1, 1)
+
+[node name="WallLeftCollision" type="CollisionShape2D" parent="WallLeft"]
+shape = SubResource("RectangleShape2D_wall_left")
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(620, 0)
+
+[node name="WallRightVisual" type="ColorRect" parent="WallRight"]
+offset_left = -20.0
+offset_top = -300.0
+offset_right = 20.0
+offset_bottom = 300.0
+color = Color(0.3, 0.2, 0.1, 1)
+
+[node name="WallRightCollision" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource("RectangleShape2D_wall_right")
+
+[node name="PlatformLeft" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(-300, 150)
+
+[node name="PlatformLeftVisual" type="ColorRect" parent="PlatformLeft"]
+offset_left = -100.0
+offset_top = -10.0
+offset_right = 100.0
+offset_bottom = 10.0
+color = Color(0.45, 0.3, 0.15, 1)
+
+[node name="PlatformLeftCollision" type="CollisionShape2D" parent="PlatformLeft"]
+shape = SubResource("RectangleShape2D_platform_left")
+
+[node name="PlatformRight" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(300, 150)
+
+[node name="PlatformRightVisual" type="ColorRect" parent="PlatformRight"]
+offset_left = -100.0
+offset_top = -10.0
+offset_right = 100.0
+offset_bottom = 10.0
+color = Color(0.45, 0.3, 0.15, 1)
+
+[node name="PlatformRightCollision" type="CollisionShape2D" parent="PlatformRight"]
+shape = SubResource("RectangleShape2D_platform_right")
+
+[node name="Decorations" type="Node2D" parent="."]
+
+[node name="Tree01" type="Node2D" parent="Decorations"]
+position = Vector2(-450, 278)
+
+[node name="Trunk01" type="ColorRect" parent="Decorations/Tree01"]
+offset_left = -10.0
+offset_top = -60.0
+offset_right = 10.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.1, 1)
+
+[node name="Crown01" type="ColorRect" parent="Decorations/Tree01"]
+offset_left = -30.0
+offset_top = -120.0
+offset_right = 30.0
+offset_bottom = -55.0
+color = Color(0.15, 0.5, 0.15, 1)
+
+[node name="Tree02" type="Node2D" parent="Decorations"]
+position = Vector2(-350, 278)
+
+[node name="Trunk02" type="ColorRect" parent="Decorations/Tree02"]
+offset_left = -8.0
+offset_top = -50.0
+offset_right = 8.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.1, 1)
+
+[node name="Crown02" type="ColorRect" parent="Decorations/Tree02"]
+offset_left = -25.0
+offset_top = -100.0
+offset_right = 25.0
+offset_bottom = -45.0
+color = Color(0.1, 0.45, 0.1, 1)
+
+[node name="Tree03" type="Node2D" parent="Decorations"]
+position = Vector2(380, 278)
+
+[node name="Trunk03" type="ColorRect" parent="Decorations/Tree03"]
+offset_left = -10.0
+offset_top = -65.0
+offset_right = 10.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.1, 1)
+
+[node name="Crown03" type="ColorRect" parent="Decorations/Tree03"]
+offset_left = -35.0
+offset_top = -130.0
+offset_right = 35.0
+offset_bottom = -60.0
+color = Color(0.12, 0.48, 0.12, 1)
+
+[node name="Rock01" type="Node2D" parent="Decorations"]
+position = Vector2(-150, 285)
+
+[node name="RockVisual01" type="ColorRect" parent="Decorations/Rock01"]
+offset_left = -25.0
+offset_top = -18.0
+offset_right = 25.0
+offset_bottom = 0.0
+color = Color(0.55, 0.55, 0.55, 1)
+
+[node name="Rock02" type="Node2D" parent="Decorations"]
+position = Vector2(200, 285)
+
+[node name="RockVisual02" type="ColorRect" parent="Decorations/Rock02"]
+offset_left = -18.0
+offset_top = -12.0
+offset_right = 18.0
+offset_bottom = 0.0
+color = Color(0.5, 0.5, 0.5, 1)
+
+[node name="Rock03" type="Node2D" parent="Decorations"]
+position = Vector2(480, 285)
+
+[node name="RockVisual03" type="ColorRect" parent="Decorations/Rock03"]
+offset_left = -30.0
+offset_top = -22.0
+offset_right = 30.0
+offset_bottom = 0.0
+color = Color(0.6, 0.58, 0.55, 1)
+
+[node name="Lighting" type="Node2D" parent="."]
+
+[node name="SunLight" type="PointLight2D" parent="Lighting"]
+position = Vector2(0, -500)
+color = Color(1.0, 0.95, 0.8, 1)
+energy = 1.5
+texture_scale = 8.0
+shadow_enabled = false
+
+[node name="AmbientFill" type="PointLight2D" parent="Lighting"]
+position = Vector2(0, 0)
+color = Color(0.4, 0.5, 0.7, 0.4)
+energy = 0.6
+texture_scale = 15.0
+shadow_enabled = false
+blend_mode = 1
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(0, 260)
+gizmo_extents = 20.0
+
+[node name="SpawnIndicator" type="Node2D" parent="PlayerSpawn"]
+
+[node name="IndicatorBase" type="ColorRect" parent="PlayerSpawn/SpawnIndicator"]
+offset_left = -15.0
+offset_top = -2.0
+offset_right = 15.0
+offset_bottom = 2.0
+color = Color(0.2, 0.8, 0.2, 0.8)
+
+[node name="IndicatorArrow" type="ColorRect" parent="PlayerSpawn/SpawnIndicator"]
+offset_left = -5.0
+offset_top = -20.0
+offset_right = 5.0
+offset_bottom = 0.0
+color = Color(0.2, 0.8, 0.2, 0.8)
+
+[node name="CameraBounds" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CameraBoundsShape" type="CollisionShape2D" parent="CameraBounds"]
+disabled = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 0)
+limit_left = -640
+limit_right = 640
+limit_top = -360
+limit_bottom = 360
+zoom = Vector2(1, 1)

@@ -10,9 +10,17 @@ config_version=5
 
 [application]
 
-config/name="新建游戏项目"
+config/name="Open-MOChai"
+config/description="多AI协作开发的2D游戏项目"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+run/main_scene="res://scenes/main.tscn"
+
+[autoload]
+
+MCPScreenshot="*res://addons/godot_mcp/mcp_screenshot_service.gd"
+MCPInputService="*res://addons/godot_mcp/mcp_input_service.gd"
+MCPGameInspector="*res://addons/godot_mcp/mcp_game_inspector_service.gd"
 
 [editor_plugins]
 

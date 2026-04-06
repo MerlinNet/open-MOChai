@@ -1,9 +1,18 @@
-name: Auto Merge dev to main
+name: Auto Merge to main
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, chai-jrpg-dev ]
   workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Source branch to merge'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - chai-jrpg-dev
 
 jobs:
   merge-to-main:
@@ -23,14 +32,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       
-      - name: Merge dev into main
+      - name: Determine source branch
+        id: source
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branch=${{ github.event.inputs.source_branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Merge ${{ steps.source.outputs.branch }} into main
         run: |
           git checkout main
           git pull origin main
-          git merge dev --no-ff -m "chore: auto-merge dev into main [skip ci]"
+          git merge ${{ steps.source.outputs.branch }} --no-ff -m "chore: auto-merge ${{ steps.source.outputs.branch }} into main [skip ci]"
           git push origin main
       
-      - name: Create merge notification
+      - name: Merge notification
         if: success()
         run: |
-          echo "Successfully merged dev into main"
+          echo "Successfully merged ${{ steps.source.outputs.branch }} into main"

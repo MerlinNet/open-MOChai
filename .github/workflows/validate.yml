@@ -2,7 +2,7 @@ name: Godot Project Validation
 
 on:
   push:
-    branches: [ dev, chai-jrpg-dev, main ]
+    branches: [ dev, moyi, chai-jrpg-dev, main ]
     paths:
       - '**.gd'
       - '**.tscn'

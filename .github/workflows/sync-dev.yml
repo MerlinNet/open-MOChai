@@ -1,0 +1,120 @@
+name: Sync to Dev
+
+on:
+  push:
+    branches: [ moyi, chai-jrpg-dev ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
+  workflow_dispatch:
+
+concurrency:
+  group: sync-dev
+  cancel-in-progress: false
+
+jobs:
+  sync-to-dev:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Fetch all branches
+        run: |
+          git fetch origin dev
+          git fetch origin moyi
+          git fetch origin chai-jrpg-dev
+      
+      - name: Determine source branch
+        id: source
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branch=manual" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Merge source into dev
+        id: merge
+        run: |
+          git checkout dev
+          git pull origin dev
+          
+          SOURCE="${{ steps.source.outputs.branch }}"
+          if [ "$SOURCE" == "manual" ]; then
+            echo "手动触发，跳过合并"
+            exit 0
+          fi
+          
+          # 合并源分支到 dev
+          if git merge origin/$SOURCE --no-ff -m "chore: merge $SOURCE into dev [skip ci]"; then
+            echo "merged=true" >> $GITHUB_OUTPUT
+            git push origin dev
+          else
+            # 自动解决冲突：优先保留两边更改
+            git checkout --theirs . || true
+            git add -A
+            git commit -m "chore: merge $SOURCE into dev (auto-resolved) [skip ci]"
+            echo "merged=true" >> $GITHUB_OUTPUT
+            echo "conflict=true" >> $GITHUB_OUTPUT
+            git push origin dev
+          fi
+      
+      - name: Sync dev back to source branches
+        run: |
+          # 同步到 moyi
+          git checkout moyi
+          git pull origin moyi
+          if git merge origin/dev -m "chore: sync dev to moyi [skip ci]"; then
+            git push origin moyi
+          else
+            git checkout --theirs . || true
+            git add -A
+            git commit -m "chore: sync dev to moyi (auto-resolved) [skip ci]"
+            git push origin moyi
+          fi
+          
+          # 同步到 chai-jrpg-dev
+          git checkout chai-jrpg-dev
+          git pull origin chai-jrpg-dev
+          if git merge origin/dev -m "chore: sync dev to chai-jrpg-dev [skip ci]"; then
+            git push origin chai-jrpg-dev
+          else
+            git checkout --theirs . || true
+            git add -A
+            git commit -m "chore: sync dev to chai-jrpg-dev (auto-resolved) [skip ci]"
+            git push origin chai-jrpg-dev
+          fi
+      
+      - name: Notify on conflict
+        if: steps.merge.outputs.conflict == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ 合并冲突已自动解决',
+              body: `
+                ## 自动解决冲突
+                
+                - **源分支**: `${{ steps.source.outputs.branch }}`
+                - **目标分支**: `dev`
+                - **触发者**: @${{ github.actor }}
+                
+                冲突已自动处理，请检查合并结果。
+              `,
+              labels: ['conflict', 'auto-merge']
+            })

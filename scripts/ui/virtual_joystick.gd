@@ -86,7 +86,7 @@ func _update_knob_position(touch_pos: Vector2) -> void:
 		
 		# 计算输出值 (-1 到 1)
 		_output = direction / max_distance
-		_output = _output.clamp(-1, 1)
+		_output = _output.clampf(-1.0, 1.0)
 	
 	emit_signal("joystick_moved", _output)
 

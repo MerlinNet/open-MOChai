@@ -1,0 +1,36 @@
+name: Auto Merge dev to main
+
+on:
+  push:
+    branches: [ dev ]
+  workflow_dispatch:
+
+jobs:
+  merge-to-main:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Merge dev into main
+        run: |
+          git checkout main
+          git pull origin main
+          git merge dev --no-ff -m "chore: auto-merge dev into main [skip ci]"
+          git push origin main
+      
+      - name: Create merge notification
+        if: success()
+        run: |
+          echo "Successfully merged dev into main"

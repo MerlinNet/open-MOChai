@@ -1,0 +1,51 @@
+name: Godot Project Validation
+
+on:
+  push:
+    branches: [ dev, chai-jrpg-dev, main ]
+    paths:
+      - '**.gd'
+      - '**.tscn'
+      - '**.tres'
+      - 'project.godot'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      
+      - name: Validate project
+        run: |
+          godot --headless --check-only --quit-after 10 2>&1 | tee validation.log || true
+          if grep -q "ERROR\|SCRIPT ERROR" validation.log; then
+            echo "❌ 项目验证失败"
+            exit 1
+          fi
+          echo "✅ 项目验证通过"
+      
+      - name: Check GDScript syntax
+        run: |
+          find . -name "*.gd" -type f | while read file; do
+            echo "检查: $file"
+            godot --headless --check-only --script "$file" --quit-after 5 2>&1 | grep -v "Failed to load resource" || true
+          done
+      
+      - name: Upload validation log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-log
+          path: validation.log

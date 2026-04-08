@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(identify *)"
-    ]
-  },
-  "$version": 3
-}

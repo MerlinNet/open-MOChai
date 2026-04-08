@@ -3,3 +3,8 @@
 /android/
 .iflow/
 debug/
+
+# AI assistant directories
+.claude/
+.qwen/
+.codebuddy/

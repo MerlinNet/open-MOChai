@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8subway0001"]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/tilesets/subway_tileset.png" id="1_tileset"]
+[ext_resource type="Script" path="res://scripts/levels/subway_station.gd" id="2_script"]
+
+[sub_resource type="TileSet" id="TileSet_subway"]
+tile_size = Vector2(16, 16)
+
+[node name="SubwayStation" type="TileMapLayer"]
+script = ExtResource("2_script")
+tile_set = SubResource("TileSet_subway")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(160, 120)
+
+[node name="Light1" type="PointLight2D" parent="."]
+position = Vector2(80, 80)
+color = Color(0.8, 0.9, 1, 1)
+energy = 2.0
+range = 100.0
+
+[node name="Light2" type="PointLight2D" parent="."]
+position = Vector2(240, 80)
+color = Color(0.8, 0.9, 1, 1)
+energy = 2.0
+range = 100.0
+
+[node name="Light3" type="PointLight2D" parent="."]
+position = Vector2(80, 200)
+color = Color(0.8, 0.9, 1, 1)
+energy = 2.0
+range = 100.0
+
+[node name="Light4" type="PointLight2D" parent="."]
+position = Vector2(240, 200)
+color = Color(0.8, 0.9, 1, 1)
+energy = 2.0
+range = 100.0
+
+[node name="NeonSign" type="PointLight2D" parent="."]
+position = Vector2(160, 60)
+color = Color(0.2, 0.6, 1, 1)
+energy = 1.5
+range = 80.0

@@ -1,0 +1,38 @@
+## 地铁站关卡控制器
+## @ai-author Claude (2026-04-08)
+## @ai-task 创建地铁站关卡，使用地铁风格tileset
+
+extends TileMapLayer
+
+# 地铁站地图数据 (0=空地, 1=地面, 2=铁轨, 3=墙壁, 4=站台边缘, 5=柱子)
+const MAP_DATA = [
+	[3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
+	[3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+]
+
+func _ready() -> void:
+	_build_station()
+
+
+func _build_station() -> void:
+	# 根据地图数据铺设tile
+	for row in range(MAP_DATA.size()):
+		for col in range(MAP_DATA[row].size()):
+			var tile_type = MAP_DATA[row][col]
+			if tile_type > 0:
+				set_cell(Vector2i(col, row), 0, Vector2i(tile_type - 1, 0))
+
+
+func _get_tile_texture(tile_index: int) -> Texture2D:
+	# 返回对应tile的纹理
+	return null

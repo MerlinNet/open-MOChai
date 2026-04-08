@@ -1,1 +1,114 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="124" height="124" x="2" y="2" fill="#363d52" stroke="#212532" stroke-width="4" rx="14"/><g fill="#fff" transform="translate(12.322 12.322)scale(.101)"><path d="M105 673v33q407 354 814 0v-33z"/><path fill="#478cbf" d="m105 673 152 14q12 1 15 14l4 67 132 10 8-61q2-11 15-15h162q13 4 15 15l8 61 132-10 4-67q3-13 15-14l152-14V427q30-39 56-81-35-59-83-108-43 20-82 47-40-37-88-64 7-51 8-102-59-28-123-42-26 43-46 89-49-7-98 0-20-46-46-89-64 14-123 42 1 51 8 102-48 27-88 64-39-27-82-47-48 49-83 108 26 42 56 81zm0 33v39c0 276 813 276 814 0v-39l-134 12-5 69q-2 10-14 13l-162 11q-12 0-16-11l-10-65H446l-10 65q-4 11-16 11l-162-11q-12-3-14-13l-5-69z"/><path d="M483 600c0 34 58 34 58 0v-86c0-34-58-34-58 0z"/><circle cx="725" cy="526" r="90"/><circle cx="299" cy="526" r="90"/></g><g fill="#414042" transform="translate(12.322 12.322)scale(.101)"><circle cx="307" cy="532" r="60"/><circle cx="717" cy="532" r="60"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d2d44"/>
+      <stop offset="50%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16162a"/>
+    </linearGradient>
+    
+    <!-- Ambient glow -->
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffb450;stop-opacity:0.25"/>
+      <stop offset="40%" style="stop-color:#ff9640;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#ff9640;stop-opacity:0"/>
+    </radialGradient>
+    
+    <!-- Border gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:0.5"/>
+      <stop offset="100%" style="stop-color:#d4af37;stop-opacity:0.2"/>
+    </linearGradient>
+    
+    <!-- Drop shadow for character frame -->
+    <filter id="frameShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle star pattern -->
+  <circle cx="102" cy="154" r="1.5" fill="#ffc864" opacity="0.12"/>
+  <circle cx="358" cy="102" r="1" fill="#ffc864" opacity="0.1"/>
+  <circle cx="410" cy="358" r="1.2" fill="#ffc864" opacity="0.14"/>
+  <circle cx="154" cy="410" r="1" fill="#ffc864" opacity="0.08"/>
+  <circle cx="256" cy="256" r="2" fill="#ffc864" opacity="0.06"/>
+  <circle cx="72" cy="256" r="1" fill="#ffc864" opacity="0.1"/>
+  <circle cx="440" cy="256" r="1" fill="#ffc864" opacity="0.1"/>
+  <circle cx="256" cy="72" r="1" fill="#ffc864" opacity="0.08"/>
+  <circle cx="256" cy="440" r="1" fill="#ffc864" opacity="0.08"/>
+
+  <!-- Ambient glow behind character -->
+  <circle cx="256" cy="246" r="140" fill="url(#glowGrad)"/>
+
+  <!-- Outer border -->
+  <rect x="12" y="12" width="488" height="488" rx="84" fill="none" stroke="url(#borderGrad)" stroke-width="3"/>
+  <!-- Inner border -->
+  <rect x="20" y="20" width="472" height="472" rx="76" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.2"/>
+
+  <!-- Corner accents -->
+  <path d="M44 56 L44 80 M44 56 L68 56" stroke="#d4af37" stroke-width="2" opacity="0.25" fill="none" stroke-linecap="round"/>
+  <path d="M468 56 L468 80 M468 56 L444 56" stroke="#d4af37" stroke-width="2" opacity="0.25" fill="none" stroke-linecap="round"/>
+  <path d="M44 456 L44 432 M44 456 L68 456" stroke="#d4af37" stroke-width="2" opacity="0.25" fill="none" stroke-linecap="round"/>
+  <path d="M468 456 L468 432 M468 456 L444 456" stroke="#d4af37" stroke-width="2" opacity="0.25" fill="none" stroke-linecap="round"/>
+
+  <!-- Character sprite frame -->
+  <g filter="url(#frameShadow)">
+    <rect x="156" y="136" width="200" height="200" rx="24" fill="#0a0a14" fill-opacity="0.4" stroke="#d4af37" stroke-width="2" stroke-opacity="0.3"/>
+  </g>
+
+  <!-- Pixel Character (centered, scaled 6x) -->
+  <g transform="translate(186, 156) scale(6)">
+    <!-- Hair top -->
+    <rect x="8" y="0" width="20" height="16" fill="#d4845a" rx="10" ry="10"/>
+    <!-- Hair sides -->
+    <rect x="4" y="8" width="8" height="24" fill="#c47a50" rx="4"/>
+    <rect x="24" y="8" width="8" height="24" fill="#c47a50" rx="4"/>
+    <!-- Bow -->
+    <rect x="6" y="-2" width="8" height="6" fill="#c0392b" rx="3"/>
+    <rect x="22" y="-2" width="8" height="6" fill="#c0392b" rx="3"/>
+    <rect x="12" y="0" width="4" height="4" fill="#e74c3c" rx="1"/>
+    <!-- Face -->
+    <rect x="8" y="12" width="16" height="12" fill="#fce4c8"/>
+    <!-- Eyes -->
+    <rect x="10" y="16" width="3" height="3" fill="#2c3e50" rx="1"/>
+    <rect x="23" y="16" width="3" height="3" fill="#2c3e50" rx="1"/>
+    <!-- Eye shine -->
+    <rect x="11" y="16" width="1" height="1" fill="#ffffff" opacity="0.8"/>
+    <rect x="24" y="16" width="1" height="1" fill="#ffffff" opacity="0.8"/>
+    <!-- Blush -->
+    <rect x="7" y="19" width="3" height="2" fill="#ff9696" opacity="0.5" rx="1"/>
+    <rect x="26" y="19" width="3" height="2" fill="#ff9696" opacity="0.5" rx="1"/>
+    <!-- Mouth (subtle smile) -->
+    <rect x="15" y="21" width="2" height="1" fill="#e8a090" rx="0.5"/>
+    <!-- Dress top -->
+    <rect x="7" y="24" width="18" height="14" fill="#5b8a8a" rx="2"/>
+    <!-- Dress accent line -->
+    <rect x="9" y="26" width="14" height="2" fill="#7ab5b5"/>
+    <!-- Dress collar -->
+    <rect x="11" y="24" width="10" height="2" fill="#ffffff" opacity="0.4"/>
+    <!-- Dress skirt -->
+    <rect x="6" y="36" width="20" height="8" fill="#4a7575" rx="0" ry="4"/>
+    <!-- Arms -->
+    <rect x="3" y="26" width="4" height="10" fill="#5b8a8a" rx="2"/>
+    <rect x="25" y="26" width="4" height="10" fill="#5b8a8a" rx="2"/>
+    <!-- Hands -->
+    <rect x="3" y="34" width="4" height="3" fill="#fce4c8" rx="1"/>
+    <rect x="25" y="34" width="4" height="3" fill="#fce4c8" rx="1"/>
+    <!-- Legs -->
+    <rect x="9" y="44" width="5" height="5" fill="#fce4c8"/>
+    <rect x="22" y="44" width="5" height="5" fill="#fce4c8"/>
+    <!-- Shoes -->
+    <rect x="8" y="49" width="6" height="3" fill="#8b5e3c" rx="0" ry="2"/>
+    <rect x="22" y="49" width="6" height="3" fill="#8b5e3c" rx="0" ry="2"/>
+  </g>
+
+  <!-- Title text -->
+  <text x="256" y="420" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="8" fill="#d4af37" opacity="0.5">OPEN MOCHAI</text>
+  
+  <!-- Subtitle - smaller decorative text -->
+  <text x="256" y="445" text-anchor="middle" font-family="monospace" font-size="8" letter-spacing="4" fill="#d4af37" opacity="0.25">A PIXEL ADVENTURE</text>
+</svg>

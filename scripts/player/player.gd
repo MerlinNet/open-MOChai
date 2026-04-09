@@ -101,18 +101,17 @@ func _update_state() -> void:
 
 
 func _update_animation() -> void:
-	# 根据朝向设置动画
 	var anim_name: String = Direction.keys()[facing_direction].to_lower()
-	
-	if anim_sprite.animation != anim_name:
-		anim_sprite.play(anim_name)
-	
-	# 根据状态播放/停止动画
+
 	if current_state == State.WALKING:
-		if not anim_sprite.is_playing():
+		if anim_sprite.animation != anim_name:
+			anim_sprite.play(anim_name)
+		elif not anim_sprite.is_playing():
 			anim_sprite.play(anim_name)
 	else:
-		anim_sprite.stop()
+		# 空闲时停止动画，保持当前帧
+		if anim_sprite.is_playing():
+			anim_sprite.stop()
 
 
 # 触摸输入接口

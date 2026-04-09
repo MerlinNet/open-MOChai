@@ -102,15 +102,19 @@ func _update_state() -> void:
 
 func _update_animation() -> void:
 	var anim_name: String = Direction.keys()[facing_direction].to_lower()
-
+	
 	if current_state == State.WALKING:
+		# 走路时：切换动画或继续播放
 		if anim_sprite.animation != anim_name:
 			anim_sprite.play(anim_name)
 		elif not anim_sprite.is_playing():
 			anim_sprite.play(anim_name)
 	else:
-		# 空闲时停止动画，保持当前帧
-		if anim_sprite.is_playing():
+		# 空闲时：停止动画保持当前朝向帧
+		if anim_sprite.animation != anim_name:
+			anim_sprite.play(anim_name)
+			anim_sprite.stop()
+		elif anim_sprite.is_playing():
 			anim_sprite.stop()
 
 

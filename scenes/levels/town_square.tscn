@@ -146,7 +146,7 @@ shape = SubResource("RectangleShape2D_wall_bottom")
 z_index = 2
 
 [node name="PlayerSpawn" type="Marker2D" parent="Markers"]
-position = Vector2(720, 1000)
+position = Vector2(720, 660)
 gizmo_extents = 20.0
 
 [node name="SpawnIndicator" type="Node2D" parent="PlayerSpawn"]
@@ -247,4 +247,4 @@ shadow_enabled = false
 blend_mode = 1
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
-position = Vector2(720, 1000)
+position = Vector2(720, 660)

@@ -6,7 +6,6 @@ extends Node2D
 
 # 当前关卡引用
 @onready var current_level_container: Node2D = $CurrentLevel
-@onready var camera: Camera2D = $Camera2D
 @onready var touch_controls: TouchControls = $TouchControls
 
 # 默认关卡
@@ -68,13 +67,3 @@ func load_level(level_path: String) -> void:
 	var level_instance := level_scene.instantiate()
 	current_level_container.add_child(level_instance)
 	print("[Main] 已加载关卡: %s" % level_path)
-
-	# 设置相机跟随玩家
-	_setup_camera_target()
-
-
-## 设置相机跟随当前关卡中的玩家
-func _setup_camera_target() -> void:
-	var player = _get_current_player()
-	if player and camera:
-		camera.make_current()

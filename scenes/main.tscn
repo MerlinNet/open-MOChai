@@ -8,13 +8,4 @@ script = ExtResource("2_main")
 
 [node name="CurrentLevel" type="Node2D" parent="."]
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(800, 528)
-zoom = Vector2(1, 1)
-limit_left = 0
-limit_top = 0
-limit_right = 1600
-limit_bottom = 1056
-position_smoothing_enabled = true
-
 [node name="TouchControls" parent="." instance=ExtResource("1_touch")]

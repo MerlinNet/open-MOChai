@@ -1,8 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://ctownsquare0001"]
+[gd_scene load_steps=20 format=3 uid="uid://ctownsquare0001"]
 
 [ext_resource type="Script" path="res://scripts/levels/town_square.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/maps/town_square.jpg" id="2_bg"]
 [ext_resource type="PackedScene" uid="uid://c8player0001" path="res://scenes/player/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://c8touchctrl0001" path="res://scenes/ui/touch_controls.tscn" id="4_touch"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_shop_left"]
 size = Vector2(240, 200)
@@ -248,3 +249,6 @@ blend_mode = 1
 
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(720, 660)
+groups = ["player"]
+
+[node name="TouchControls" parent="." instance=ExtResource("4_touch")]

@@ -16,6 +16,7 @@ signal player_spawned(spawn_position: Vector2)
 @onready var portals: Node2D = $Portals
 @onready var background: Sprite2D = $Background
 @onready var player: Node2D = $Player
+@onready var touch_controls: CanvasLayer = $TouchControls
 
 # NPC 位置字典 (供外部查询)
 var npc_positions: Dictionary = {}
@@ -32,8 +33,26 @@ func _ready() -> void:
 	_cache_portal_positions()
 	_print_scene_info()
 	_setup_player()
+	_connect_touch_controls()
 	print("[TownSquare] 城镇广场已加载")
 	print("[TownSquare] 玩家出生点: %s" % get_spawn_position())
+
+
+## 连接触摸控件信号
+func _connect_touch_controls() -> void:
+	if touch_controls:
+		touch_controls.move_input.connect(_on_touch_move)
+		touch_controls.float_pressed.connect(_on_touch_float)
+
+
+func _on_touch_move(direction: Vector2) -> void:
+	if player and player.has_method("set_touch_direction"):
+		player.set_touch_direction(direction)
+
+
+func _on_touch_float() -> void:
+	if player and player.has_method("set_touch_float"):
+		player.set_touch_float(true)
 
 
 ## 设置玩家初始位置

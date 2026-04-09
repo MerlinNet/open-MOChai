@@ -38,6 +38,9 @@ var touch_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_initialize()
+	# 设置碰撞层和掩码
+	collision_layer = 1  # 玩家在层 1
+	collision_mask = 4   # 只与层 4（环境/障碍物）碰撞
 
 
 func _physics_process(delta: float) -> void:
@@ -115,6 +118,11 @@ func _update_animation() -> void:
 # 触摸输入接口
 func set_touch_direction(direction: Vector2) -> void:
 	touch_direction = direction
+
+
+func set_touch_float(_pressed: bool) -> void:
+	# 预留方法，暂未实现浮空功能
+	pass
 
 
 # 公共方法

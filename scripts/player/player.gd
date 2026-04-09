@@ -76,11 +76,11 @@ func _handle_movement() -> void:
 	if input_dir.length() > 1.0:
 		input_dir = input_dir.normalized()
 
-	if input_dir != Vector2.ZERO:
+	if input_dir.length() > 0.1:
 		# 加速移动
 		velocity = velocity.lerp(input_dir * speed, acceleration)
 
-		# 更新朝向 (优先左右，因为俯视角中左右更常见)
+		# 更新朝向 (优先左右，增加阈值防止对角移动时抖动)
 		if abs(input_dir.x) > abs(input_dir.y):
 			facing_direction = Direction.RIGHT if input_dir.x > 0 else Direction.LEFT
 		else:

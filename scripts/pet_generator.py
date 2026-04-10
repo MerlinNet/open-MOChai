@@ -6,7 +6,7 @@ import os
 
 def get_git_info():
     try:
-        r = subprocess.run(["git", "log", "--oneline"], capture_output=True, text=True, check=True)
+        r = subprocess.run(["git", "log", "--oneline", "--grep=auto-merge", "--invert-grep", "--grep=skip ci", "--invert-grep", "--grep=Okami", "--invert-grep", "--grep=Merge", "--invert-grep"], capture_output=True, text=True, check=True)
         count = len([l for l in r.stdout.strip().split("\n") if l]) if r.stdout.strip() else 0
         r = subprocess.run(["git", "log", "-1", "--format=%H"], capture_output=True, text=True, check=True)
         return count, r.stdout.strip()

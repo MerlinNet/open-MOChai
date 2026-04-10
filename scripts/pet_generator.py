@@ -21,14 +21,14 @@ def get_stage(n):
 
 def get_mood(h):
     v = int(h[-2:], 16) % 100 if len(h) >= 2 else 0
-    if v <= 24: return "😊", "开心", "呼噜呼噜踩奶中~"
-    elif v <= 49: return "😴", "困倦", "蜷成一团睡得正香..."
-    elif v <= 74: return "🤩", "兴奋", "追着逗猫棒满屋跑！"
-    else: return "😈", "调皮", "把水杯推到了地上~"
+    if v <= 24: return "😊", "开心", "在代码花园里追蝴蝶~"
+    elif v <= 49: return "😴", "困倦", "趴在键盘上睡得正香..."
+    elif v <= 74: return "🤩", "兴奋", "追着 bug 满屏跑！"
+    else: return "😈", "调皮", "偷偷把场景文件藏起来了~"
 
 def get_action(n):
     if n % 2 == 0: return "🧶", "玩耍中", "和毛线球大战三百回合~"
-    else: return "🐟", "干饭中", "认真享用小鱼干中..."
+    else: return "🐟", "干饭中", "认真吃掉每个 commit 小鱼干..."
 
 ARTS = {
     "egg": [

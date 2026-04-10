@@ -2,112 +2,94 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2d1b4e"/>
-      <stop offset="50%" style="stop-color:#1e1238"/>
-      <stop offset="100%" style="stop-color:#140e28"/>
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16162a"/>
+      <stop offset="100%" style="stop-color:#12101f"/>
     </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="42%" r="50%">
-      <stop offset="0%" style="stop-color:#ff90b0;stop-opacity:0.35"/>
-      <stop offset="40%" style="stop-color:#ff70a0;stop-opacity:0.15"/>
-      <stop offset="100%" style="stop-color:#ff50a0;stop-opacity:0"/>
+    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" style="stop-color:#ffa060;stop-opacity:0.3"/>
+      <stop offset="50%" style="stop-color:#ff8040;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#ff6030;stop-opacity:0"/>
     </radialGradient>
   </defs>
 
   <!-- Background -->
   <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
-  
-  <!-- Ambient glow behind character -->
-  <circle cx="256" cy="215" r="180" fill="url(#glow)"/>
-  
+
+  <!-- Ambient glow -->
+  <circle cx="256" cy="230" r="160" fill="url(#glow)"/>
+
   <!-- Subtle sparkle dots -->
-  <g fill="#ffd0e0" opacity="0.2">
-    <circle cx="80" cy="100" r="2.5"/>
-    <circle cx="430" cy="120" r="2"/>
+  <g fill="#ffd080" opacity="0.15">
+    <circle cx="80" cy="100" r="2"/>
+    <circle cx="430" cy="120" r="1.5"/>
     <circle cx="100" cy="420" r="2"/>
-    <circle cx="410" cy="400" r="2.5"/>
-    <circle cx="200" cy="60" r="1.5"/>
-    <circle cx="320" cy="70" r="2"/>
-    <circle cx="180" cy="450" r="1.5"/>
-    <circle cx="340" cy="440" r="2"/>
+    <circle cx="410" cy="400" r="1.5"/>
+    <circle cx="200" cy="60" r="1"/>
+    <circle cx="320" cy="70" r="1.5"/>
+    <circle cx="180" cy="450" r="1"/>
+    <circle cx="340" cy="440" r="1.5"/>
   </g>
 
-  <!-- ===== LARGE PIXEL CHARACTER (16x17 grid, scaled 20x = 320x340) ===== -->
-  <!-- Positioned to fill the canvas prominently -->
-  <g transform="translate(96, 80) scale(20)" shape-rendering="crispEdges">
-    
-    <!-- === HAIR === -->
-    <!-- Top -->
-    <rect x="5" y="0" width="6" height="1" fill="#e89850"/>
-    <rect x="4" y="1" width="8" height="1" fill="#e09048"/>
-    <rect x="3" y="2" width="10" height="1" fill="#d88840"/>
-    <!-- Left strand -->
-    <rect x="2" y="3" width="2" height="6" fill="#d08038"/>
-    <rect x="1" y="6" width="2" height="4" fill="#c87830"/>
-    <rect x="0" y="8" width="2" height="3" fill="#c07028"/>
-    <!-- Right strand -->
-    <rect x="12" y="3" width="2" height="6" fill="#d08038"/>
-    <rect x="13" y="6" width="2" height="4" fill="#c87830"/>
-    <rect x="14" y="8" width="2" height="3" fill="#c07028"/>
-    <!-- Hair highlight -->
-    <rect x="6" y="0" width="2" height="1" fill="#f0a060"/>
-    <rect x="10" y="0" width="1" height="1" fill="#f0a060"/>
-    
-    <!-- === RED BOW === -->
-    <rect x="3" y="0" width="2" height="2" fill="#d82828"/>
-    <rect x="11" y="0" width="2" height="2" fill="#d82828"/>
-    <rect x="7" y="1" width="2" height="2" fill="#e83838"/>
-    <rect x="2" y="1" width="1" height="2" fill="#c82020"/>
-    <rect x="13" y="1" width="1" height="2" fill="#c82020"/>
-    
-    <!-- === FACE === -->
-    <rect x="4" y="3" width="8" height="5" fill="#fce4d0"/>
-    <!-- Eyes -->
-    <rect x="5" y="5" width="2" height="2" fill="#202848"/>
-    <rect x="9" y="5" width="2" height="2" fill="#202848"/>
-    <!-- Eye highlights -->
+  <!-- ===== PIXEL CAT (16x16 grid, scaled 20x = 320x320) ===== -->
+  <g transform="translate(96, 110) scale(20)" shape-rendering="crispEdges">
+
+    <!-- === EARS === -->
+    <rect x="3" y="0" width="2" height="2" fill="#e89050"/>
+    <rect x="11" y="0" width="2" height="2" fill="#e89050"/>
+    <!-- Inner ears -->
+    <rect x="3" y="0" width="1" height="1" fill="#f0a8a8"/>
+    <rect x="12" y="0" width="1" height="1" fill="#f0a8a8"/>
+
+    <!-- === HEAD === -->
+    <!-- Top fur -->
+    <rect x="4" y="2" width="8" height="1" fill="#e89050"/>
+    <rect x="3" y="3" width="10" height="1" fill="#e08848"/>
+    <!-- Face -->
+    <rect x="3" y="4" width="10" height="5" fill="#f0a070"/>
+    <!-- Cheeks -->
+    <rect x="2" y="5" width="1" height="3" fill="#e89860"/>
+    <rect x="13" y="5" width="1" height="3" fill="#e89860"/>
+
+    <!-- === EYES === -->
+    <rect x="5" y="5" width="2" height="2" fill="#205830"/>
+    <rect x="9" y="5" width="2" height="2" fill="#205830"/>
+    <!-- Eye shine -->
     <rect x="5" y="5" width="1" height="1" fill="#ffffff"/>
     <rect x="9" y="5" width="1" height="1" fill="#ffffff"/>
-    <rect x="6" y="6" width="1" height="1" fill="#ffffff" opacity="0.5"/>
-    <rect x="10" y="6" width="1" height="1" fill="#ffffff" opacity="0.5"/>
-    <!-- Blush -->
-    <rect x="4" y="6" width="1" height="1" fill="#f0a8a8" opacity="0.7"/>
-    <rect x="11" y="6" width="1" height="1" fill="#f0a8a8" opacity="0.7"/>
-    <!-- Cute smile -->
-    <rect x="7" y="7" width="2" height="1" fill="#e8a898"/>
-    
-    <!-- === NECKLACE === -->
-    <rect x="6" y="8" width="4" height="1" fill="#ffffff" opacity="0.6"/>
-    
-    <!-- === DRESS === -->
-    <!-- Upper body -->
-    <rect x="4" y="9" width="8" height="3" fill="#60a8b8"/>
-    <!-- Accent line -->
-    <rect x="4" y="10" width="8" height="1" fill="#78c0d0"/>
-    <!-- Skirt -->
-    <rect x="3" y="12" width="10" height="3" fill="#5098a8"/>
-    <!-- Skirt highlight -->
-    <rect x="5" y="12" width="6" height="1" fill="#68b0c0"/>
-    <!-- Skirt bottom ruffle -->
-    <rect x="3" y="14" width="1" height="1" fill="#60a8b8"/>
-    <rect x="12" y="14" width="1" height="1" fill="#60a8b8"/>
-    
-    <!-- === ARMS === -->
-    <rect x="2" y="9" width="2" height="4" fill="#60a8b8"/>
-    <rect x="12" y="9" width="2" height="4" fill="#60a8b8"/>
-    <!-- Hands -->
-    <rect x="2" y="13" width="2" height="1" fill="#fce4d0"/>
-    <rect x="12" y="13" width="2" height="1" fill="#fce4d0"/>
-    
-    <!-- === LEGS === -->
-    <rect x="5" y="15" width="2" height="1" fill="#fce4d0"/>
-    <rect x="9" y="15" width="2" height="1" fill="#fce4d0"/>
-    <!-- Shoes -->
-    <rect x="4" y="16" width="3" height="1" fill="#806848"/>
-    <rect x="9" y="16" width="3" height="1" fill="#806848"/>
-    
+
+    <!-- === NOSE === -->
+    <rect x="7" y="7" width="2" height="1" fill="#e06060"/>
+
+    <!-- === MOUTH === -->
+    <rect x="6" y="8" width="1" height="1" fill="#d05050"/>
+    <rect x="9" y="8" width="1" height="1" fill="#d05050"/>
+
+    <!-- === WHISKERS === -->
+    <rect x="0" y="6" width="2" height="1" fill="#f0c8a0"/>
+    <rect x="0" y="8" width="2" height="1" fill="#f0c8a0"/>
+    <rect x="14" y="6" width="2" height="1" fill="#f0c8a0"/>
+    <rect x="14" y="8" width="2" height="1" fill="#f0c8a0"/>
+
+    <!-- === BODY === -->
+    <rect x="4" y="9" width="8" height="4" fill="#e89050"/>
+    <!-- Belly -->
+    <rect x="5" y="10" width="6" height="2" fill="#f0b888"/>
+
+    <!-- === PAWS === -->
+    <rect x="3" y="10" width="1" height="3" fill="#e89050"/>
+    <rect x="12" y="10" width="1" height="3" fill="#e89050"/>
+    <!-- Feet -->
+    <rect x="4" y="13" width="2" height="1" fill="#f0a880"/>
+    <rect x="10" y="13" width="2" height="1" fill="#f0a880"/>
+
+    <!-- === TAIL === -->
+    <rect x="1" y="12" width="2" height="1" fill="#e89050"/>
+    <rect x="0" y="11" width="2" height="1" fill="#e08848"/>
+
   </g>
 
   <!-- ===== TITLE ===== -->
-  <text x="256" y="456" text-anchor="middle" font-family="'Courier New', monospace" font-size="16" font-weight="bold" letter-spacing="12" fill="#ffd080" opacity="0.45">OPEN MOCHAI</text>
+  <text x="256" y="460" text-anchor="middle" font-family="'Courier New', monospace" font-size="18" font-weight="bold" letter-spacing="14" fill="#ffa060" opacity="0.5">OKAMI</text>
 
 </svg>

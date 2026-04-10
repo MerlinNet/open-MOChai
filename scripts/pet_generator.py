@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""🐾 电子宠物生成器 - 根据 commit 历史生成宠物状态"""
+"""🐱 Okami 电子猫 - 根据 commit 历史生成猫咪状态"""
 
 import subprocess
-import sys
 import os
 
 def get_git_info():
@@ -15,64 +14,63 @@ def get_git_info():
         return 0, ""
 
 def get_stage(n):
-    if n <= 10: return "egg", "🥚", "蛋蛋期"
-    elif n <= 30: return "baby", "🐣", "幼崽期"
-    elif n <= 100: return "grow", "🐾", "成长期"
-    else: return "mature", "🐉", "成熟期"
+    if n <= 10: return "egg", "🥚", "沉睡期"
+    elif n <= 30: return "kitten", "🐱", "幼猫期"
+    elif n <= 100: return "cat", "🐈", "成长期"
+    else: return "master", "👑", "猫仙期"
 
 def get_mood(h):
     v = int(h[-2:], 16) % 100 if len(h) >= 2 else 0
-    if v <= 24: return "😊", "开心", "摇着尾巴转圈圈~"
-    elif v <= 49: return "😴", "困倦", "打着小呼噜，睡得正香..."
-    elif v <= 74: return "🤩", "兴奋", "兴奋地蹦蹦跳跳！"
-    else: return "😈", "调皮", "偷偷把主人的袜子藏起来了~"
+    if v <= 24: return "😊", "开心", "呼噜呼噜踩奶中~"
+    elif v <= 49: return "😴", "困倦", "蜷成一团睡得正香..."
+    elif v <= 74: return "🤩", "兴奋", "追着逗猫棒满屋跑！"
+    else: return "😈", "调皮", "把水杯推到了地上~"
 
 def get_action(n):
-    if n % 2 == 0: return "🎮", "玩耍中", "在代码花园里追逐蝴蝶~"
-    else: return "📚", "学习中", "认真研究 GDScript 中..."
+    if n % 2 == 0: return "🧶", "玩耍中", "和毛线球大战三百回合~"
+    else: return "🐟", "干饭中", "认真享用小鱼干中..."
 
 ARTS = {
     "egg": [
         "      ___\n"
         "     /   \\\n"
-        "    | o o |\n"
+        "    | z z |\n"
         "    |  ^  |\n"
         "     \\___/\n"
-        "   💤 沉睡中...",
+        "   💤 蛋蛋猫沉睡中...",
 
         "      .-~-. \n"
         "     /     \\\n"
         "    |  ~ ~  |\n"
         "    |   ^   |\n"
         "     \\___/\n"
-        "   (˘ω˘) 好梦~",
+        "   (˘ω˘) 蛋蛋猫好梦~",
     ],
-    "baby": [
+    "kitten": [
         "      /\\_/\\\n"
         "     ( o.o )\n"
         "      > ^ <\n"
         "     /|   |\\\n"
         "    (_|   |_)\n"
-        "   🐣 出壳啦！",
+        "   🐱 小奶猫出壳啦！",
 
-        "       __\n"
-        "      /  \\\n"
-        "     | o.o|\n"
-        "     |  ^ |\n"
-        "      \\__/\n"
-        "     /| |\\\n"
-        "    🎵 咿呀学语~",
+        "       /\\_/\\\n"
+        "      ( ^.^ )\n"
+        "       > \" <\n"
+        "      /|   |\\\n"
+        "     (_|   |_)\n"
+        "   🎵 喵呜喵呜~",
     ],
-    "grow": [
+    "cat": [
         "        /\\_/\\\n"
         "       /`    \\\n"
         "      |  O O  |\n"
         "      |   >   |\n"
-        "      |  \\_/\n"
+        "      |  \\_/ |\n"
         "       \\____/\n"
         "      /|    |\\\n"
         "     (_|____|_)\n"
-        "      🌟 变强中~",
+        "   🐈 优雅大猫咪~",
 
         "         .-~~~-. \n"
         "        /  .-.  \\\n"
@@ -83,9 +81,9 @@ ARTS = {
         "        /|   |\\\n"
         "       / |   | \\\n"
         "      (_|___|_)\n"
-        "      💫 活力满满！",
+        "   ✨ 猫咪大人驾到！",
     ],
-    "mature": [
+    "master": [
         "          .--.\n"
         "         |o_o |\n"
         "         |:_/ |\n"
@@ -93,7 +91,7 @@ ARTS = {
         "       (|     | )\n"
         "       /'\\_   _/`\\\n"
         "       \\___)=(___/\n"
-        "      🐉 完全体神龙！",
+        "      👑 九尾猫仙！",
 
         "         *  .  *\n"
         "       .-^---^-.\n"
@@ -103,9 +101,9 @@ ARTS = {
         "       `--| |--'\n"
         "         /| |\\\n"
         "        /_|_|_\\\n"
-        "       | ★ 传说 |\n"
+        "       | ★ 猫仙 |\n"
         "       |________|\n"
-        "      👑 传说级！",
+        "      🔮 传说级猫仙！",
     ],
 }
 
@@ -118,25 +116,25 @@ def main():
     arts = ARTS[stage]
     art = arts[n % len(arts)]
 
-    content = f"""# 🐾 我的电子宠物
+    content = f"""# 🐱 Okami
 
 ```
 {art}
 ```
 
-**名字**: 小莫  **年龄**: {n} 次 commit  **阶段**: {icon} {sname}
+**年龄**: {n} 次 commit  **阶段**: {icon} {sname}
 **动作**: {aicon} {aname}  **心情**: {micon} {mname}
 
 > {adesc}
 > {mdesc}
 
-_每次 commit 我都会成长变化哦！_
+_每次 commit Okami 都会成长变化哦！_
 """
 
     path = os.path.join(subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True).stdout.strip(), "README.md")
     with open(path, "w") as f:
         f.write(content)
-    print(f"🐾 小莫已更新！({sname} | {mname} | {aname})")
+    print(f"🐱 Okami 已更新！({sname} | {mname} | {aname})")
 
 if __name__ == "__main__":
     main()

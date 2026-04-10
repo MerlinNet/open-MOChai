@@ -38,7 +38,7 @@ func _input(event: InputEvent) -> void:
 func _handle_touch(event: InputEventScreenTouch) -> void:
 	if event.pressed:
 		# 检查触摸是否在摇杆区域内
-		var local_pos := get_local_mouse_position() if event.index == 0 else _get_touch_position(event.index)
+		var local_pos = event.position - global_position
 		if _is_in_joystick_area(local_pos) and _touch_index == -1:
 			_is_pressed = true
 			_touch_index = event.index
@@ -52,17 +52,8 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 
 func _handle_drag(event: InputEventScreenDrag) -> void:
 	if event.index == _touch_index and _is_pressed:
-		var local_pos := _get_touch_position(event.index)
+		var local_pos = event.position - global_position
 		_update_knob_position(local_pos)
-
-
-func _get_touch_position(index: int) -> Vector2:
-	# 获取触摸位置（相对于摇杆中心）
-	var touches := Input.get_connected_joypads()
-	for touch in touches:
-		var pos := Input.get_joy_axis(touch, JOY_AXIS_LEFT_X)
-	# 简化处理：使用全局鼠标位置
-	return get_global_mouse_position() - global_position
 
 
 func _is_in_joystick_area(pos: Vector2) -> bool:

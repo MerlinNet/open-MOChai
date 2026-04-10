@@ -37,120 +37,72 @@
 [sub_resource type="SpriteFrames" id="SpriteFrames_player"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_down_0")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_down_1")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_down_2")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_down_3")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_down_4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_down_5")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_down_6")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_down_7")
 }],
 "loop": true,
 "name": &"down",
-"speed": 8.0
+"speed": 1.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_left_0")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_left_1")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_left_2")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_left_3")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_left_4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_left_5")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_left_6")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_left_7")
 }],
 "loop": true,
 "name": &"left",
-"speed": 8.0
+"speed": 1.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_right_0")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_right_1")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_right_2")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_right_3")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_right_4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_right_5")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_right_6")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_right_7")
 }],
 "loop": true,
 "name": &"right",
-"speed": 8.0
+"speed": 1.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_up_0")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_up_1")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_up_2")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": ExtResource("walk_up_3")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_up_4")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_up_5")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_up_6")
-}, {
-"duration": 1.0,
-"texture": ExtResource("walk_up_7")
 }],
 "loop": true,
 "name": &"up",
-"speed": 8.0
+"speed": 1.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
@@ -170,3 +122,12 @@ offset = Vector2(0, -8)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1, 1)
+position_smoothing_enabled = true
+position_smoothing_speed = 5.0
+limit_left = 0
+limit_top = 0
+limit_right = 1600
+limit_bottom = 1056

@@ -38,6 +38,9 @@ var touch_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_initialize()
+	# 设置碰撞层和掩码
+	collision_layer = 1  # 玩家在层 1
+	collision_mask = 4   # 只与层 4（环境/障碍物）碰撞
 
 
 func _physics_process(delta: float) -> void:
@@ -73,11 +76,11 @@ func _handle_movement() -> void:
 	if input_dir.length() > 1.0:
 		input_dir = input_dir.normalized()
 
-	if input_dir != Vector2.ZERO:
+	if input_dir.length() > 0.1:
 		# 加速移动
 		velocity = velocity.lerp(input_dir * speed, acceleration)
 
-		# 更新朝向 (优先左右，因为俯视角中左右更常见)
+		# 更新朝向 (优先左右，增加阈值防止对角移动时抖动)
 		if abs(input_dir.x) > abs(input_dir.y):
 			facing_direction = Direction.RIGHT if input_dir.x > 0 else Direction.LEFT
 		else:
@@ -98,23 +101,31 @@ func _update_state() -> void:
 
 
 func _update_animation() -> void:
-	# 根据朝向设置动画
 	var anim_name: String = Direction.keys()[facing_direction].to_lower()
 	
-	if anim_sprite.animation != anim_name:
-		anim_sprite.play(anim_name)
-	
-	# 根据状态播放/停止动画
 	if current_state == State.WALKING:
-		if not anim_sprite.is_playing():
+		# 走路时：切换动画或继续播放
+		if anim_sprite.animation != anim_name:
+			anim_sprite.play(anim_name)
+		elif not anim_sprite.is_playing():
 			anim_sprite.play(anim_name)
 	else:
-		anim_sprite.stop()
+		# 空闲时：停止动画保持当前朝向帧
+		if anim_sprite.animation != anim_name:
+			anim_sprite.play(anim_name)
+			anim_sprite.stop()
+		elif anim_sprite.is_playing():
+			anim_sprite.stop()
 
 
 # 触摸输入接口
 func set_touch_direction(direction: Vector2) -> void:
 	touch_direction = direction
+
+
+func set_touch_float(_pressed: bool) -> void:
+	# 预留方法，暂未实现浮空功能
+	pass
 
 
 # 公共方法

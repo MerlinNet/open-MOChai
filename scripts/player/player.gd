@@ -38,9 +38,11 @@ var touch_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_initialize()
-	# 设置碰撞层和掩码
+	# 俯视角模式：无重力，自由四方向移动
+	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
+	# 碰撞层和掩码 (层1=玩家, 层2=敌人, 层3=环境, 层4=收集品)
 	collision_layer = 1  # 玩家在层 1
-	collision_mask = 4   # 只与层 4（环境/障碍物）碰撞
+	collision_mask = 14  # 检测层 2+3+4 (敌人+环境+收集品)
 
 
 func _physics_process(delta: float) -> void:
@@ -48,10 +50,10 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_handle_movement()
+	move_and_slide()
+	_handle_collision_response()
 	_update_state()
 	_update_animation()
-
-	move_and_slide()
 
 
 func _initialize() -> void:
@@ -88,6 +90,23 @@ func _handle_movement() -> void:
 	else:
 		# 摩擦减速
 		velocity = velocity.lerp(Vector2.ZERO, friction)
+
+
+## 碰撞后响应：滑墙时沿碰撞面滑动
+func _handle_collision_response() -> void:
+	# move_and_slide() 已自动处理滑墙
+	# 这里根据碰撞信息做额外处理
+	for i in get_slide_collision_count():
+		var collision := get_slide_collision(i)
+		var collider := collision.get_collider()
+		if collider == null:
+			continue
+		# 检测是否碰到敌人层 (layer 2)
+		if collider.collision_layer & 2:
+			take_damage(10)
+		# 检测是否碰到收集品层 (layer 4)
+		elif collider.collision_layer & 8:
+			pass  # 收集逻辑待实现
 
 
 func _update_state() -> void:

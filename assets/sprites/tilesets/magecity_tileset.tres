@@ -1,0 +1,26 @@
+[gd_resource type="TileSet" format=3 uid="uid://magecity_tileset"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+texture = null
+tile_size = Vector2i(16, 16)
+separation = Vector2i(0, 0)
+margins = Vector2i(0, 0)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2"]
+texture = null
+tile_size = Vector2i(16, 16)
+separation = Vector2i(0, 0)
+margins = Vector2i(0, 0)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3"]
+texture = null
+tile_size = Vector2i(16, 16)
+separation = Vector2i(0, 0)
+margins = Vector2i(0, 0)
+
+[resource]
+physics_layer__array = []
+navigation_layer__array = []
+occlusion_layer__array = []
+terrain_set__array = []
+source__array = [SubResource("TileSetAtlasSource_1"), SubResource("TileSetAtlasSource_2"), SubResource("TileSetAtlasSource_3")]

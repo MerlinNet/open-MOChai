@@ -1,35 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://c8main0001"]
+[gd_scene load_steps=3 format=3 uid="uid://c8main0001"]
 
-[ext_resource type="PackedScene" uid="uid://c8player0001" path="res://scenes/player/player.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://c8touchctrl0001" path="res://scenes/ui/touch_controls.tscn" id="2_touch"]
-[ext_resource type="Script" path="res://scripts/main.gd" id="3_main"]
-[ext_resource type="PackedScene" uid="uid://spawn_point_scene" path="res://scenes/levels/spawn_point.tscn" id="4_spawn"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_boundary"]
-size = Vector2(800, 600)
+[ext_resource type="PackedScene" uid="uid://c8touchctrl0001" path="res://scenes/ui/touch_controls.tscn" id="1_touch"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="2_main"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("3_main")
+script = ExtResource("2_main")
 
-[node name="CurrentLevel" type="Node2D" parent="."]
-
-[node name="SpawnPointLevel" parent="CurrentLevel" instance=ExtResource("4_spawn")]
-position = Vector2(0, 0)
-
-[node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(400, 300)
-
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(400, 300)
-zoom = Vector2(2, 2)
-
-[node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(400, 300)
-
-[node name="TouchControls" parent="." instance=ExtResource("2_touch")]
-
-[node name="Boundary" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundary"]
-position = Vector2(400, 300)
-shape = SubResource("RectangleShape2D_boundary")
+[node name="TouchControls" parent="." instance=ExtResource("1_touch")]

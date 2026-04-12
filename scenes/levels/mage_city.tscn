@@ -1,0 +1,309 @@
+[gd_scene load_steps=14 format=3 uid="uid://cmagecity0001"]
+
+[ext_resource type="Script" path="res://scripts/levels/mage_city.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_shop"]
+size = Vector2(128, 96)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_blacksmith"]
+size = Vector2(96, 80)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fountain"]
+radius = 24.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_boundary_h"]
+size = Vector2(16, 640)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_boundary_v"]
+size = Vector2(800, 16)
+
+[node name="MageCity" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Ground" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 800.0
+offset_bottom = 640.0
+color = Color(0.35, 0.55, 0.25, 1)
+
+[node name="Roads" type="Node2D" parent="."]
+
+[node name="Road_Horizontal" type="ColorRect" parent="Roads"]
+offset_left = 0.0
+offset_top = 304.0
+offset_right = 800.0
+offset_bottom = 336.0
+color = Color(0.5, 0.5, 0.45, 1)
+
+[node name="Road_Vertical" type="ColorRect" parent="Roads"]
+offset_left = 384.0
+offset_top = 0.0
+offset_right = 416.0
+offset_bottom = 640.0
+color = Color(0.5, 0.5, 0.45, 1)
+
+[node name="Buildings" type="Node2D" parent="."]
+
+[node name="MagicShop" type="StaticBody2D" parent="Buildings"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(120, 200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/MagicShop"]
+shape = SubResource("RectangleShape2D_shop")
+
+[node name="Inn" type="StaticBody2D" parent="Buildings"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(680, 200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/Inn"]
+shape = SubResource("RectangleShape2D_shop")
+
+[node name="Blacksmith" type="StaticBody2D" parent="Buildings"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(120, 480)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/Blacksmith"]
+shape = SubResource("RectangleShape2D_blacksmith")
+
+[node name="GuildHall" type="StaticBody2D" parent="Buildings"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(680, 480)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/GuildHall"]
+shape = SubResource("RectangleShape2D_blacksmith")
+
+[node name="Decorations" type="Node2D" parent="."]
+z_sorting = 1
+
+[node name="Fountain" type="Node2D" parent="Decorations"]
+position = Vector2(400, 320)
+
+[node name="FountainBase" type="ColorRect" parent="Fountain"]
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0.45, 0.45, 0.5, 1)
+
+[node name="FountainWater" type="ColorRect" parent="Fountain"]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.2, 0.5, 0.8, 0.8)
+
+[node name="FountainCollision" type="StaticBody2D" parent="Fountain"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fountain/FountainCollision"]
+shape = SubResource("CircleShape2D_fountain")
+
+[node name="Tree01" type="Node2D" parent="Decorations"]
+position = Vector2(60, 100)
+
+[node name="Trunk" type="ColorRect" parent="Tree01"]
+offset_left = -4.0
+offset_top = -20.0
+offset_right = 4.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.15, 1)
+
+[node name="Crown" type="ColorRect" parent="Tree01"]
+offset_left = -16.0
+offset_top = -48.0
+offset_right = 16.0
+offset_bottom = -16.0
+color = Color(0.15, 0.45, 0.15, 1)
+
+[node name="Tree02" type="Node2D" parent="Decorations"]
+position = Vector2(740, 100)
+
+[node name="Trunk" type="ColorRect" parent="Tree02"]
+offset_left = -4.0
+offset_top = -20.0
+offset_right = 4.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.15, 1)
+
+[node name="Crown" type="ColorRect" parent="Tree02"]
+offset_left = -16.0
+offset_top = -48.0
+offset_right = 16.0
+offset_bottom = -16.0
+color = Color(0.15, 0.45, 0.15, 1)
+
+[node name="Tree03" type="Node2D" parent="Decorations"]
+position = Vector2(60, 540)
+
+[node name="Trunk" type="ColorRect" parent="Tree03"]
+offset_left = -4.0
+offset_top = -20.0
+offset_right = 4.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.15, 1)
+
+[node name="Crown" type="ColorRect" parent="Tree03"]
+offset_left = -16.0
+offset_top = -48.0
+offset_right = 16.0
+offset_bottom = -16.0
+color = Color(0.15, 0.45, 0.15, 1)
+
+[node name="Tree04" type="Node2D" parent="Decorations"]
+position = Vector2(740, 540)
+
+[node name="Trunk" type="ColorRect" parent="Tree04"]
+offset_left = -4.0
+offset_top = -20.0
+offset_right = 4.0
+offset_bottom = 0.0
+color = Color(0.4, 0.25, 0.15, 1)
+
+[node name="Crown" type="ColorRect" parent="Tree04"]
+offset_left = -16.0
+offset_top = -48.0
+offset_right = 16.0
+offset_bottom = -16.0
+color = Color(0.15, 0.45, 0.15, 1)
+
+[node name="Bench01" type="ColorRect" parent="Decorations"]
+offset_left = 300.0
+offset_top = 280.0
+offset_right = 340.0
+offset_bottom = 300.0
+color = Color(0.5, 0.35, 0.2, 1)
+
+[node name="Bench02" type="ColorRect" parent="Decorations"]
+offset_left = 460.0
+offset_top = 280.0
+offset_right = 500.0
+offset_bottom = 300.0
+color = Color(0.5, 0.35, 0.2, 1)
+
+[node name="LampPost01" type="PointLight2D" parent="Decorations"]
+position = Vector2(250, 250)
+color = Color(1.0, 0.8, 0.4, 1)
+energy = 1.5
+texture_scale = 8.0
+shadow_enabled = false
+
+[node name="LampPost02" type="PointLight2D" parent="Decorations"]
+position = Vector2(550, 250)
+color = Color(1.0, 0.8, 0.4, 1)
+energy = 1.5
+texture_scale = 8.0
+shadow_enabled = false
+
+[node name="LampPost03" type="PointLight2D" parent="Decorations"]
+position = Vector2(250, 450)
+color = Color(1.0, 0.8, 0.4, 1)
+energy = 1.5
+texture_scale = 8.0
+shadow_enabled = false
+
+[node name="LampPost04" type="PointLight2D" parent="Decorations"]
+position = Vector2(550, 450)
+color = Color(1.0, 0.8, 0.4, 1)
+energy = 1.5
+texture_scale = 8.0
+shadow_enabled = false
+
+[node name="Boundaries" type="Node2D" parent="."]
+
+[node name="BoundaryLeft" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(8, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryLeft"]
+shape = SubResource("RectangleShape2D_boundary_h")
+
+[node name="BoundaryRight" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(792, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryRight"]
+shape = SubResource("RectangleShape2D_boundary_h")
+
+[node name="BoundaryTop" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(400, 8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryTop"]
+shape = SubResource("RectangleShape2D_boundary_v")
+
+[node name="BoundaryBottom" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(400, 632)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryBottom"]
+shape = SubResource("RectangleShape2D_boundary_v")
+
+[node name="NPCPoints" type="Node2D" parent="."]
+
+[node name="NPC_Merchant" type="Marker2D" parent="NPCPoints"]
+position = Vector2(180, 280)
+gizmo_extents = 15.0
+
+[node name="NPC_Innkeeper" type="Marker2D" parent="NPCPoints"]
+position = Vector2(620, 280)
+gizmo_extents = 15.0
+
+[node name="NPC_Blacksmith" type="Marker2D" parent="NPCPoints"]
+position = Vector2(180, 520)
+gizmo_extents = 15.0
+
+[node name="NPC_GuildMaster" type="Marker2D" parent="NPCPoints"]
+position = Vector2(620, 520)
+gizmo_extents = 15.0
+
+[node name="NPC_Guide" type="Marker2D" parent="NPCPoints"]
+position = Vector2(400, 220)
+gizmo_extents = 15.0
+
+[node name="Portals" type="Node2D" parent="."]
+
+[node name="Portal_Dungeon" type="Marker2D" parent="Portals"]
+position = Vector2(100, 320)
+gizmo_extents = 20.0
+
+[node name="Portal_Forest" type="Marker2D" parent="Portals"]
+position = Vector2(700, 320)
+gizmo_extents = 20.0
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(400, 560)
+gizmo_extents = 20.0
+
+[node name="SpawnIndicator" type="Node2D" parent="PlayerSpawn"]
+
+[node name="IndicatorBase" type="ColorRect" parent="PlayerSpawn/SpawnIndicator"]
+offset_left = -15.0
+offset_top = -2.0
+offset_right = 15.0
+offset_bottom = 2.0
+color = Color(0.2, 0.9, 0.2, 0.9)
+
+[node name="IndicatorArrow" type="ColorRect" parent="PlayerSpawn/SpawnIndicator"]
+offset_left = -5.0
+offset_top = -20.0
+offset_right = 5.0
+offset_bottom = 0.0
+color = Color(0.2, 0.9, 0.2, 0.9)
+
+[node name="AmbientLight" type="PointLight2D" parent="."]
+position = Vector2(400, 320)
+color = Color(0.8, 0.75, 0.9, 0.3)
+energy = 0.5
+texture_scale = 50.0
+shadow_enabled = false
+blend_mode = 1

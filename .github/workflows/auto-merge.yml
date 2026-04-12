@@ -1,12 +1,6 @@
-name: Auto Merge to main
+name: Merge to Main
 
 on:
-  push:
-    branches: [ dev, chai-jrpg-dev ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/**'
   workflow_dispatch:
     inputs:
       source_branch:
@@ -16,16 +10,11 @@ on:
         type: choice
         options:
           - dev
+          - moyi
           - chai-jrpg-dev
-      sync_back:
-        description: 'Sync back to source branch after merge'
-        required: false
-        default: true
-        type: boolean
 
-# 并发控制：同一分支只允许一个工作流运行
 concurrency:
-  group: merge-${{ github.ref }}
+  group: merge-main
   cancel-in-progress: true
 
 jobs:
@@ -33,10 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
-    outputs:
-      merge_status: ${{ steps.merge.outcome }}
-      source_branch: ${{ steps.source.outputs.branch }}
     
     steps:
       - name: Checkout repository
@@ -50,25 +35,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       
-      - name: Determine source branch
-        id: source
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "branch=${{ github.event.inputs.source_branch }}" >> $GITHUB_OUTPUT
-          else
-            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
-      
       - name: Fetch all branches
         run: |
           git fetch origin main
-          git fetch origin ${{ steps.source.outputs.branch }}
+          git fetch origin ${{ github.event.inputs.source_branch }}
       
       - name: Check for conflicts
         id: check
         run: |
           git checkout main
-          git merge --no-commit --no-ff origin/${{ steps.source.outputs.branch }} || {
+          git merge --no-commit --no-ff origin/${{ github.event.inputs.source_branch }} || {
             echo "conflict=true" >> $GITHUB_OUTPUT
             git merge --abort
             exit 1
@@ -76,24 +52,12 @@ jobs:
           git merge --abort
           echo "conflict=false" >> $GITHUB_OUTPUT
       
-      - name: Merge ${{ steps.source.outputs.branch }} into main
-        id: merge
+      - name: Merge into main
         run: |
           git checkout main
           git pull origin main
-          git merge origin/${{ steps.source.outputs.branch }} --no-ff -m "chore: auto-merge ${{ steps.source.outputs.branch }} into main [skip ci]"
+          git merge origin/${{ github.event.inputs.source_branch }} --no-ff -m "chore: merge ${{ github.event.inputs.source_branch }} into main [skip ci]"
           git push origin main
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-      
-      - name: Sync back to source branch
-        if: |
-          (github.event_name == 'workflow_dispatch' && github.event.inputs.sync_back == 'true') ||
-          github.event_name == 'push'
-        run: |
-          git checkout ${{ steps.source.outputs.branch }}
-          git pull origin ${{ steps.source.outputs.branch }}
-          git merge main -m "chore: sync main to ${{ steps.source.outputs.branch }}"
-          git push origin ${{ steps.source.outputs.branch }}
 
   notify-failure:
     needs: merge-to-main
@@ -107,16 +71,15 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: '⚠️ 自动合并失败 - 需要手动解决冲突',
+              title: '⚠️ 合并到 main 失败 - 需要手动解决冲突',
               body: `
                 ## 合并冲突
                 
-                - **源分支**: `${{ needs.merge-to-main.outputs.source_branch }}`
-                - **目标分支**: `main`
+                - **源分支**: \`${{ github.event.inputs.source_branch }}\`
+                - **目标分支**: \`main\`
                 - **触发者**: @${{ github.actor }}
-                - **提交**: ${{ github.sha }}
                 
-                请手动解决冲突后重新推送。
+                请手动解决冲突后重新触发。
               `,
-              labels: ['conflict', 'auto-merge']
+              labels: ['conflict', 'main-merge']
             })

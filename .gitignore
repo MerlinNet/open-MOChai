@@ -3,3 +3,13 @@
 /android/
 .iflow/
 debug/
+
+# AI assistant directories
+.claude/
+.qwen/
+.codebuddy/
+# Environment variables
+.env.local
+.mcp.json
+CODEBUDDY.md
+cloudbaserc.json

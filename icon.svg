@@ -1,1 +1,95 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="124" height="124" x="2" y="2" fill="#363d52" stroke="#212532" stroke-width="4" rx="14"/><g fill="#fff" transform="translate(12.322 12.322)scale(.101)"><path d="M105 673v33q407 354 814 0v-33z"/><path fill="#478cbf" d="m105 673 152 14q12 1 15 14l4 67 132 10 8-61q2-11 15-15h162q13 4 15 15l8 61 132-10 4-67q3-13 15-14l152-14V427q30-39 56-81-35-59-83-108-43 20-82 47-40-37-88-64 7-51 8-102-59-28-123-42-26 43-46 89-49-7-98 0-20-46-46-89-64 14-123 42 1 51 8 102-48 27-88 64-39-27-82-47-48 49-83 108 26 42 56 81zm0 33v39c0 276 813 276 814 0v-39l-134 12-5 69q-2 10-14 13l-162 11q-12 0-16-11l-10-65H446l-10 65q-4 11-16 11l-162-11q-12-3-14-13l-5-69z"/><path d="M483 600c0 34 58 34 58 0v-86c0-34-58-34-58 0z"/><circle cx="725" cy="526" r="90"/><circle cx="299" cy="526" r="90"/></g><g fill="#414042" transform="translate(12.322 12.322)scale(.101)"><circle cx="307" cy="532" r="60"/><circle cx="717" cy="532" r="60"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16162a"/>
+      <stop offset="100%" style="stop-color:#12101f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" style="stop-color:#ffa060;stop-opacity:0.3"/>
+      <stop offset="50%" style="stop-color:#ff8040;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#ff6030;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <!-- Ambient glow -->
+  <circle cx="256" cy="230" r="160" fill="url(#glow)"/>
+
+  <!-- Subtle sparkle dots -->
+  <g fill="#ffd080" opacity="0.15">
+    <circle cx="80" cy="100" r="2"/>
+    <circle cx="430" cy="120" r="1.5"/>
+    <circle cx="100" cy="420" r="2"/>
+    <circle cx="410" cy="400" r="1.5"/>
+    <circle cx="200" cy="60" r="1"/>
+    <circle cx="320" cy="70" r="1.5"/>
+    <circle cx="180" cy="450" r="1"/>
+    <circle cx="340" cy="440" r="1.5"/>
+  </g>
+
+  <!-- ===== PIXEL CAT (16x16 grid, scaled 20x = 320x320) ===== -->
+  <g transform="translate(96, 110) scale(20)" shape-rendering="crispEdges">
+
+    <!-- === EARS === -->
+    <rect x="3" y="0" width="2" height="2" fill="#e89050"/>
+    <rect x="11" y="0" width="2" height="2" fill="#e89050"/>
+    <!-- Inner ears -->
+    <rect x="3" y="0" width="1" height="1" fill="#f0a8a8"/>
+    <rect x="12" y="0" width="1" height="1" fill="#f0a8a8"/>
+
+    <!-- === HEAD === -->
+    <!-- Top fur -->
+    <rect x="4" y="2" width="8" height="1" fill="#e89050"/>
+    <rect x="3" y="3" width="10" height="1" fill="#e08848"/>
+    <!-- Face -->
+    <rect x="3" y="4" width="10" height="5" fill="#f0a070"/>
+    <!-- Cheeks -->
+    <rect x="2" y="5" width="1" height="3" fill="#e89860"/>
+    <rect x="13" y="5" width="1" height="3" fill="#e89860"/>
+
+    <!-- === EYES === -->
+    <rect x="5" y="5" width="2" height="2" fill="#205830"/>
+    <rect x="9" y="5" width="2" height="2" fill="#205830"/>
+    <!-- Eye shine -->
+    <rect x="5" y="5" width="1" height="1" fill="#ffffff"/>
+    <rect x="9" y="5" width="1" height="1" fill="#ffffff"/>
+
+    <!-- === NOSE === -->
+    <rect x="7" y="7" width="2" height="1" fill="#e06060"/>
+
+    <!-- === MOUTH === -->
+    <rect x="6" y="8" width="1" height="1" fill="#d05050"/>
+    <rect x="9" y="8" width="1" height="1" fill="#d05050"/>
+
+    <!-- === WHISKERS === -->
+    <rect x="0" y="6" width="2" height="1" fill="#f0c8a0"/>
+    <rect x="0" y="8" width="2" height="1" fill="#f0c8a0"/>
+    <rect x="14" y="6" width="2" height="1" fill="#f0c8a0"/>
+    <rect x="14" y="8" width="2" height="1" fill="#f0c8a0"/>
+
+    <!-- === BODY === -->
+    <rect x="4" y="9" width="8" height="4" fill="#e89050"/>
+    <!-- Belly -->
+    <rect x="5" y="10" width="6" height="2" fill="#f0b888"/>
+
+    <!-- === PAWS === -->
+    <rect x="3" y="10" width="1" height="3" fill="#e89050"/>
+    <rect x="12" y="10" width="1" height="3" fill="#e89050"/>
+    <!-- Feet -->
+    <rect x="4" y="13" width="2" height="1" fill="#f0a880"/>
+    <rect x="10" y="13" width="2" height="1" fill="#f0a880"/>
+
+    <!-- === TAIL === -->
+    <rect x="1" y="12" width="2" height="1" fill="#e89050"/>
+    <rect x="0" y="11" width="2" height="1" fill="#e08848"/>
+
+  </g>
+
+  <!-- ===== TITLE ===== -->
+  <text x="256" y="460" text-anchor="middle" font-family="'Courier New', monospace" font-size="18" font-weight="bold" letter-spacing="14" fill="#ffa060" opacity="0.5">OKAMI</text>
+
+</svg>

@@ -9,11 +9,15 @@ extends CanvasLayer
 signal move_input(direction: Vector2)
 signal float_pressed()
 signal interact_pressed()
+signal attack_pressed()
+signal special_pressed()
 
 # 节点引用
 @onready var joystick: VirtualJoystick = $Control/Joystick
-@onready var float_button: ActionButton = $Control/FloatButton
-@onready var interact_button: ActionButton = $Control/InteractButton
+@onready var button_a: ActionButton = $Control/ButtonA
+@onready var button_b: ActionButton = $Control/ButtonB
+@onready var button_x: ActionButton = $Control/ButtonX
+@onready var button_y: ActionButton = $Control/ButtonY
 
 # 是否启用
 var is_enabled: bool = true:
@@ -32,20 +36,26 @@ func _ready() -> void:
 	else:
 		# 在桌面端默认隐藏（可手动开启测试）
 		is_enabled = false
-	
+
 	_connect_signals()
 
 
 func _connect_signals() -> void:
 	if joystick:
 		joystick.joystick_moved.connect(_on_joystick_moved)
-	
-	if float_button:
-		float_button.action_pressed.connect(_on_float_pressed)
-		float_button.action_released.connect(_on_float_released)
-	
-	if interact_button:
-		interact_button.action_pressed.connect(_on_interact_pressed)
+
+	if button_a:
+		button_a.action_pressed.connect(_on_float_pressed)
+		button_a.action_released.connect(_on_float_released)
+
+	if button_b:
+		button_b.action_pressed.connect(_on_interact_pressed)
+
+	if button_x:
+		button_x.action_pressed.connect(_on_attack_pressed)
+
+	if button_y:
+		button_y.action_pressed.connect(_on_special_pressed)
 
 
 func _on_joystick_moved(direction: Vector2) -> void:
@@ -63,6 +73,14 @@ func _on_float_released() -> void:
 
 func _on_interact_pressed() -> void:
 	emit_signal("interact_pressed")
+
+
+func _on_attack_pressed() -> void:
+	emit_signal("attack_pressed")
+
+
+func _on_special_pressed() -> void:
+	emit_signal("special_pressed")
 
 
 # 获取移动方向

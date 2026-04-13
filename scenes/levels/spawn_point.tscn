@@ -1,52 +1,94 @@
-[gd_scene load_steps=5 format=3 uid="uid://spawn_point_scene"]
+[gd_scene load_steps=8 format=3 uid="uid://spawn_point_scene"]
 
 [ext_resource type="Script" path="res://scripts/levels/spawn_point.gd" id="1_spawn_script"]
+
+; === 碰撞形状 ===
 
 [sub_resource type="RectangleShape2D" id="shape_ground"]
 size = Vector2(800, 48)
 
-[sub_resource type="RectangleShape2D" id="shape_boundary"]
+[sub_resource type="RectangleShape2D" id="shape_boundary_h"]
 size = Vector2(16, 600)
+
+[sub_resource type="RectangleShape2D" id="shape_boundary_v"]
+size = Vector2(800, 16)
+
+[sub_resource type="RectangleShape2D" id="shape_house"]
+size = Vector2(56, 40)
+
+[sub_resource type="RectangleShape2D" id="shape_branch_wall"]
+size = Vector2(100, 16)
 
 [sub_resource type="RectangleShape2D" id="shape_barrier"]
 size = Vector2(800, 16)
 
-[sub_resource type="RectangleShape2D" id="shape_house"]
-size = Vector2(64, 48)
-
-[sub_resource type="RectangleShape2D" id="shape_platform"]
-size = Vector2(160, 24)
-
 ; ============================================================
 ; Root Node - 出生点地图
 ; 坐标空间: 0~800 x 0~600
-; 风格: 类似 Black Souls 的纵深感布局
+; 风格: 纵向走廊 + 两侧分支 + 远近景纵深
 ; ============================================================
 
 [node name="SpawnPoint" type="Node2D"]
 script = ExtResource("1_spawn_script")
 
 ; ============================================================
-; 背景层 (z_index=-2) - 远处的天空和远景
+; 背景层 (z_index=-2) - 远景
 ; ============================================================
 
 [node name="Background" type="ColorRect" parent="."]
 offset_right = 800.0
 offset_bottom = 600.0
-color = Color(0.15, 0.12, 0.18, 1)
+color = Color(0.12, 0.14, 0.18, 1)
 z_index = -2
 
-; 远景山丘 (深灰蓝)
+; 远景天际线 - 深蓝灰渐变层
+[node name="DistantSky" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 800.0
+offset_bottom = 120.0
+color = Color(0.08, 0.10, 0.16, 1)
+z_index = -2
+
+; 远景山丘轮廓
 [node name="DistantHills" type="ColorRect" parent="."]
 offset_left = 0.0
-offset_top = 80.0
+offset_top = 100.0
 offset_right = 800.0
-offset_bottom = 250.0
-color = Color(0.2, 0.18, 0.25, 1)
+offset_bottom = 200.0
+color = Color(0.15, 0.17, 0.22, 1)
 z_index = -1
 
+; 远景树林 (更暗更小，营造纵深)
+[node name="DistantTrees" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = 170.0
+offset_right = 800.0
+offset_bottom = 220.0
+color = Color(0.12, 0.18, 0.12, 0.5)
+z_index = -1
+
+; 远景小屋 (半透明)
+[node name="DistantHouse" type="Node2D" parent="."]
+position = Vector2(350, 195)
+z_index = -1
+
+[node name="DistantHouseWall" type="ColorRect" parent="DistantHouse"]
+offset_left = -15.0
+offset_top = -20.0
+offset_right = 15.0
+offset_bottom = 0.0
+color = Color(0.25, 0.20, 0.18, 0.4)
+
+[node name="DistantHouseRoof" type="ColorRect" parent="DistantHouse"]
+offset_left = -18.0
+offset_top = -35.0
+offset_right = 18.0
+offset_bottom = -20.0
+color = Color(0.20, 0.12, 0.10, 0.4)
+
 ; ============================================================
-; 空气墙边界 (不可见碰撞体，包围整个地图)
+; 空气墙边界 (不可见碰撞体)
 ; ============================================================
 
 [node name="Boundary" type="Node2D" parent="."]
@@ -56,35 +98,35 @@ collision_layer = 4
 collision_mask = 0
 position = Vector2(8, 300)
 
-[node name="BoundaryCollision" type="CollisionShape2D" parent="Boundary/BoundaryLeft"]
-shape = SubResource("shape_boundary")
+[node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryLeft"]
+shape = SubResource("shape_boundary_h")
 
 [node name="BoundaryRight" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
 collision_mask = 0
 position = Vector2(792, 300)
 
-[node name="BoundaryCollision" type="CollisionShape2D" parent="Boundary/BoundaryRight"]
-shape = SubResource("shape_boundary")
+[node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryRight"]
+shape = SubResource("shape_boundary_h")
 
 [node name="BoundaryTop" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
 collision_mask = 0
 position = Vector2(400, 8)
 
-[node name="BoundaryCollision" type="CollisionShape2D" parent="Boundary/BoundaryTop"]
-shape = SubResource("shape_barrier")
+[node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryTop"]
+shape = SubResource("shape_boundary_v")
 
 [node name="BoundaryBottom" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
 collision_mask = 0
 position = Vector2(400, 592)
 
-[node name="BoundaryCollision" type="CollisionShape2D" parent="Boundary/BoundaryBottom"]
-shape = SubResource("shape_barrier")
+[node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryBottom"]
+shape = SubResource("shape_boundary_v")
 
 ; ============================================================
-; 地面 (深棕/泥土色) - y=500
+; 中景地面 (y=500, 走廊活动区)
 ; ============================================================
 
 [node name="Ground" type="StaticBody2D" parent="."]
@@ -97,342 +139,459 @@ offset_left = -400.0
 offset_top = -24.0
 offset_right = 400.0
 offset_bottom = 24.0
-color = Color(0.35, 0.28, 0.22, 1)
+color = Color(0.32, 0.26, 0.20, 1)
 
 [node name="GroundCollision" type="CollisionShape2D" parent="Ground"]
 shape = SubResource("shape_ground")
 
+; 走廊地面纹理条纹 (更浅色的泥土路)
+[node name="PathMark" type="ColorRect" parent="."]
+offset_left = 150.0
+offset_top = 502.0
+offset_right = 650.0
+offset_bottom = 508.0
+color = Color(0.38, 0.30, 0.24, 0.6)
+
 ; ============================================================
-; 前景栏杆/石墙 (z_index=1) - 横穿画面中间的障碍物
-; Black Souls 风格: 中间有一条纵向的道路/走廊，两侧有遮挡
+; 前景层 (z_index=1) - 中间横穿画面的棕色前景横条
+; Black Souls 风格的核心元素
 ; ============================================================
 
 [node name="Foreground" type="Node2D" parent="."]
 z_index = 1
 
-; 前景底栏 - 横穿画面下方的石墙
-[node name="FrontWall" type="StaticBody2D" parent="Foreground"]
+; --- 主前景横条 (横穿画面中间，棕色石墙/栅栏) ---
+[node name="ForegroundBar" type="StaticBody2D" parent="Foreground"]
 collision_layer = 4
 collision_mask = 0
-position = Vector2(400, 570)
+position = Vector2(400, 445)
 
-[node name="FrontWallVisual" type="ColorRect" parent="Foreground/FrontWall"]
+[node name="BarVisual" type="ColorRect" parent="Foreground/ForegroundBar"]
 offset_left = -400.0
-offset_top = -12.0
+offset_top = -8.0
 offset_right = 400.0
-offset_bottom = 60.0
-color = Color(0.25, 0.22, 0.28, 1)
+offset_bottom = 8.0
+color = Color(0.40, 0.28, 0.18, 1)
 
-[node name="FrontWallCollision" type="CollisionShape2D" parent="Foreground/FrontWall"]
-position = Vector2(0, -12)
+[node name="BarCollision" type="CollisionShape2D" parent="Foreground/ForegroundBar"]
 shape = SubResource("shape_barrier")
 
-; 前景顶栏 - 画面上方的遮挡（远景墙壁）
-[node name="TopWall" type="ColorRect" parent="Foreground"]
+; 前景横条上的立柱装饰 (每隔一段一个)
+[node name="Post01" type="ColorRect" parent="Foreground"]
+offset_left = 148.0
+offset_top = 425.0
+offset_right = 156.0
+offset_bottom = 465.0
+color = Color(0.35, 0.25, 0.15, 1)
+
+[node name="Post02" type="ColorRect" parent="Foreground"]
+offset_left = 298.0
+offset_top = 425.0
+offset_right = 306.0
+offset_bottom = 465.0
+color = Color(0.35, 0.25, 0.15, 1)
+
+[node name="Post03" type="ColorRect" parent="Foreground"]
+offset_left = 498.0
+offset_top = 425.0
+offset_right = 506.0
+offset_bottom = 465.0
+color = Color(0.35, 0.25, 0.15, 1)
+
+[node name="Post04" type="ColorRect" parent="Foreground"]
+offset_left = 648.0
+offset_top = 425.0
+offset_right = 656.0
+offset_bottom = 465.0
+color = Color(0.35, 0.25, 0.15, 1)
+
+; --- 前景底栏 (画面底部的石台基) ---
+[node name="BottomBar" type="ColorRect" parent="Foreground"]
+offset_left = 0.0
+offset_top = 565.0
+offset_right = 800.0
+offset_bottom = 600.0
+color = Color(0.22, 0.18, 0.15, 1)
+
+; --- 前景顶栏 (画面顶部的暗色遮罩) ---
+[node name="TopBar" type="ColorRect" parent="Foreground"]
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 800.0
-offset_bottom = 100.0
-color = Color(0.18, 0.15, 0.2, 1)
-
-; 前景侧栏 - 左侧石墙
-[node name="LeftPillar" type="StaticBody2D" parent="Foreground"]
-collision_layer = 4
-collision_mask = 0
-position = Vector2(50, 400)
-
-[node name="PillarVisual" type="ColorRect" parent="Foreground/LeftPillar"]
-offset_left = -20.0
-offset_top = -200.0
-offset_right = 20.0
-offset_bottom = 200.0
-color = Color(0.3, 0.25, 0.3, 1)
-
-[node name="PillarCollision" type="CollisionShape2D" parent="Foreground/LeftPillar"]
-shape = SubResource("shape_boundary")
-
-; 前景侧栏 - 右侧石墙
-[node name="RightPillar" type="StaticBody2D" parent="Foreground"]
-collision_layer = 4
-collision_mask = 0
-position = Vector2(750, 400)
-
-[node name="PillarVisual" type="ColorRect" parent="Foreground/RightPillar"]
-offset_left = -20.0
-offset_top = -200.0
-offset_right = 20.0
-offset_bottom = 200.0
-color = Color(0.3, 0.25, 0.3, 1)
-
-[node name="PillarCollision" type="CollisionShape2D" parent="Foreground/RightPillar"]
-shape = SubResource("shape_boundary")
+offset_bottom = 80.0
+color = Color(0.10, 0.08, 0.12, 0.7)
 
 ; ============================================================
-; 路灯/火把 (照亮走廊的暗黑氛围光源)
+; 走廊结构 - 上下围栏形成纵向通道
+; ============================================================
+
+[node name="Corridor" type="Node2D" parent="."]
+
+; 上方走廊墙 (前景横条上方，形成上走廊边界)
+[node name="UpperWall" type="StaticBody2D" parent="Corridor"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(400, 350)
+
+[node name="UpperWallVisual" type="ColorRect" parent="Corridor/UpperWall"]
+offset_left = -200.0
+offset_top = -12.0
+offset_right = 200.0
+offset_bottom = 12.0
+color = Color(0.30, 0.22, 0.16, 0.9)
+
+[node name="UpperWallCollision" type="CollisionShape2D" parent="Corridor/UpperWall"]
+shape = SubResource("shape_branch_wall")
+
+; 左侧走廊墙
+[node name="LeftWall" type="StaticBody2D" parent="Corridor"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(100, 400)
+
+[node name="LeftWallVisual" type="ColorRect" parent="Corridor/LeftWall"]
+offset_left = -12.0
+offset_top = -100.0
+offset_right = 12.0
+offset_bottom = 100.0
+color = Color(0.28, 0.20, 0.15, 0.9)
+
+[node name="LeftWallCollision" type="CollisionShape2D" parent="Corridor/LeftWall"]
+shape = SubResource("shape_boundary_h")
+
+; 右侧走廊墙
+[node name="RightWall" type="StaticBody2D" parent="Corridor"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(700, 400)
+
+[node name="RightWallVisual" type="ColorRect" parent="Corridor/RightWall"]
+offset_left = -12.0
+offset_top = -100.0
+offset_right = 12.0
+offset_bottom = 100.0
+color = Color(0.28, 0.20, 0.15, 0.9)
+
+[node name="RightWallCollision" type="CollisionShape2D" parent="Corridor/RightWall"]
+shape = SubResource("shape_boundary_h")
+
+; ============================================================
+; 分支通道 - 两侧有通向其他区域的开口
+; ============================================================
+
+[node name="Branches" type="Node2D" parent="."]
+
+; 左侧分支通道标记 (前景横条左侧的开口)
+[node name="LeftBranch" type="Node2D" parent="Branches"]
+position = Vector2(0, 445)
+
+[node name="LeftBranchFloor" type="ColorRect" parent="Branches/LeftBranch"]
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 0.0
+offset_bottom = 30.0
+color = Color(0.30, 0.24, 0.18, 0.8)
+
+[node name="LeftBranchArrow" type="ColorRect" parent="Branches/LeftBranch"]
+offset_left = -50.0
+offset_top = 4.0
+offset_right = -30.0
+offset_bottom = 16.0
+color = Color(0.5, 0.4, 0.2, 0.5)
+
+; 右侧分支通道标记
+[node name="RightBranch" type="Node2D" parent="Branches"]
+position = Vector2(800, 445)
+
+[node name="RightBranchFloor" type="ColorRect" parent="Branches/RightBranch"]
+offset_left = 0.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 30.0
+color = Color(0.30, 0.24, 0.18, 0.8)
+
+[node name="RightBranchArrow" type="ColorRect" parent="Branches/RightBranch"]
+offset_left = 30.0
+offset_top = 4.0
+offset_right = 50.0
+offset_bottom = 16.0
+color = Color(0.5, 0.4, 0.2, 0.5)
+
+; 上方分支 (走廊上方通往远处)
+[node name="UpperBranch" type="Node2D" parent="Branches"]
+position = Vector2(400, 250)
+
+[node name="UpperBranchPath" type="ColorRect" parent="Branches/UpperBranch"]
+offset_left = -40.0
+offset_top = -80.0
+offset_right = 40.0
+offset_bottom = 0.0
+color = Color(0.25, 0.20, 0.16, 0.4)
+
+[node name="UpperBranchArrow" type="ColorRect" parent="Branches/UpperBranch"]
+offset_left = -4.0
+offset_top = -70.0
+offset_right = 4.0
+offset_bottom = -50.0
+color = Color(0.5, 0.4, 0.2, 0.4)
+
+; ============================================================
+; 装饰物 (中景层)
+; ============================================================
+
+[node name="Decorations" type="Node2D" parent="."]
+
+; --- 房子1 (左走廊边, 矮) ---
+[node name="House01" type="StaticBody2D" parent="Decorations"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(170, 498)
+
+[node name="Wall" type="ColorRect" parent="Decorations/House01"]
+offset_left = -22.0
+offset_top = -32.0
+offset_right = 22.0
+offset_bottom = 0.0
+color = Color(0.45, 0.32, 0.25, 1)
+
+[node name="Roof" type="ColorRect" parent="Decorations/House01"]
+offset_left = -26.0
+offset_top = -52.0
+offset_right = 26.0
+offset_bottom = -32.0
+color = Color(0.35, 0.18, 0.15, 1)
+
+[node name="Door" type="ColorRect" parent="Decorations/House01"]
+offset_left = -5.0
+offset_top = -22.0
+offset_right = 5.0
+offset_bottom = 0.0
+color = Color(0.25, 0.15, 0.10, 1)
+
+[node name="Window" type="ColorRect" parent="Decorations/House01"]
+offset_left = -18.0
+offset_top = -28.0
+offset_right = -10.0
+offset_bottom = -20.0
+color = Color(0.6, 0.5, 0.2, 0.7)
+
+[node name="Window2" type="ColorRect" parent="Decorations/House01"]
+offset_left = 10.0
+offset_top = -28.0
+offset_right = 18.0
+offset_bottom = -20.0
+color = Color(0.6, 0.5, 0.2, 0.7)
+
+[node name="HouseCollision" type="CollisionShape2D" parent="Decorations/House01"]
+position = Vector2(0, -16)
+shape = SubResource("shape_house")
+
+; --- 房子2 (右走廊边, 矮) ---
+[node name="House02" type="StaticBody2D" parent="Decorations"]
+collision_layer = 4
+collision_mask = 0
+position = Vector2(630, 498)
+
+[node name="Wall" type="ColorRect" parent="Decorations/House02"]
+offset_left = -22.0
+offset_top = -32.0
+offset_right = 22.0
+offset_bottom = 0.0
+color = Color(0.45, 0.32, 0.25, 1)
+
+[node name="Roof" type="ColorRect" parent="Decorations/House02"]
+offset_left = -26.0
+offset_top = -52.0
+offset_right = 26.0
+offset_bottom = -32.0
+color = Color(0.35, 0.18, 0.15, 1)
+
+[node name="Door" type="ColorRect" parent="Decorations/House02"]
+offset_left = -5.0
+offset_top = -22.0
+offset_right = 5.0
+offset_bottom = 0.0
+color = Color(0.25, 0.15, 0.10, 1)
+
+[node name="Window" type="ColorRect" parent="Decorations/House02"]
+offset_left = -18.0
+offset_top = -28.0
+offset_right = -10.0
+offset_bottom = -20.0
+color = Color(0.6, 0.5, 0.2, 0.7)
+
+[node name="Window2" type="ColorRect" parent="Decorations/House02"]
+offset_left = 10.0
+offset_top = -28.0
+offset_right = 18.0
+offset_bottom = -20.0
+color = Color(0.6, 0.5, 0.2, 0.7)
+
+[node name="HouseCollision" type="CollisionShape2D" parent="Decorations/House02"]
+position = Vector2(0, -16)
+shape = SubResource("shape_house")
+
+; --- 小树 (比例小) ---
+
+[node name="Tree01" type="Node2D" parent="Decorations"]
+position = Vector2(250, 498)
+
+[node name="Trunk" type="ColorRect" parent="Decorations/Tree01"]
+offset_left = -3.0
+offset_top = -24.0
+offset_right = 3.0
+offset_bottom = 0.0
+color = Color(0.30, 0.20, 0.12, 1)
+
+[node name="Crown" type="ColorRect" parent="Decorations/Tree01"]
+offset_left = -8.0
+offset_top = -40.0
+offset_right = 8.0
+offset_bottom = -20.0
+color = Color(0.15, 0.30, 0.12, 1)
+
+[node name="Tree02" type="Node2D" parent="Decorations"]
+position = Vector2(450, 498)
+
+[node name="Trunk" type="ColorRect" parent="Decorations/Tree02"]
+offset_left = -2.0
+offset_top = -20.0
+offset_right = 2.0
+offset_bottom = 0.0
+color = Color(0.28, 0.18, 0.10, 1)
+
+[node name="Crown" type="ColorRect" parent="Decorations/Tree02"]
+offset_left = -7.0
+offset_top = -34.0
+offset_right = 7.0
+offset_bottom = -16.0
+color = Color(0.18, 0.33, 0.15, 1)
+
+[node name="Tree03" type="Node2D" parent="Decorations"]
+position = Vector2(560, 498)
+
+[node name="Trunk" type="ColorRect" parent="Decorations/Tree03"]
+offset_left = -3.0
+offset_top = -22.0
+offset_right = 3.0
+offset_bottom = 0.0
+color = Color(0.30, 0.20, 0.12, 1)
+
+[node name="Crown" type="ColorRect" parent="Decorations/Tree03"]
+offset_left = -9.0
+offset_top = -38.0
+offset_right = 9.0
+offset_bottom = -18.0
+color = Color(0.14, 0.28, 0.11, 1)
+
+; 走廊上方的树 (在中景走廊区域)
+[node name="Tree04" type="Node2D" parent="Decorations"]
+position = Vector2(250, 420)
+
+[node name="Trunk" type="ColorRect" parent="Decorations/Tree04"]
+offset_left = -2.0
+offset_top = -18.0
+offset_right = 2.0
+offset_bottom = 0.0
+color = Color(0.25, 0.18, 0.10, 0.7)
+
+[node name="Crown" type="ColorRect" parent="Decorations/Tree04"]
+offset_left = -6.0
+offset_top = -30.0
+offset_right = 6.0
+offset_bottom = -14.0
+color = Color(0.12, 0.25, 0.10, 0.7)
+
+[node name="Tree05" type="Node2D" parent="Decorations"]
+position = Vector2(550, 418)
+
+[node name="Trunk" type="ColorRect" parent="Decorations/Tree05"]
+offset_left = -2.0
+offset_top = -16.0
+offset_right = 2.0
+offset_bottom = 0.0
+color = Color(0.25, 0.18, 0.10, 0.7)
+
+[node name="Crown" type="ColorRect" parent="Decorations/Tree05"]
+offset_left = -5.0
+offset_top = -26.0
+offset_right = 5.0
+offset_bottom = -12.0
+color = Color(0.12, 0.25, 0.10, 0.7)
+
+; --- 石头 (小, 散落) ---
+
+[node name="Rock01" type="ColorRect" parent="Decorations"]
+offset_left = 310.0
+offset_top = 494.0
+offset_right = 322.0
+offset_bottom = 500.0
+color = Color(0.35, 0.33, 0.38, 1)
+
+[node name="Rock02" type="ColorRect" parent="Decorations"]
+offset_left = 500.0
+offset_top = 494.0
+offset_right = 514.0
+offset_bottom = 500.0
+color = Color(0.38, 0.35, 0.40, 1)
+
+[node name="Rock03" type="ColorRect" parent="Decorations"]
+offset_left = 390.0
+offset_top = 495.0
+offset_right = 400.0
+offset_bottom = 500.0
+color = Color(0.33, 0.30, 0.35, 1)
+
+[node name="Rock04" type="ColorRect" parent="Decorations"]
+offset_left = 580.0
+offset_top = 496.0
+offset_right = 590.0
+offset_bottom = 500.0
+color = Color(0.36, 0.34, 0.38, 1)
+
+; --- NPC (半透明) ---
+
+[node name="NPC01" type="ColorRect" parent="Decorations"]
+offset_left = 344.0
+offset_top = 475.0
+offset_right = 356.0
+offset_bottom = 500.0
+color = Color(0.4, 0.35, 0.5, 0.5)
+
+[node name="NPC02" type="ColorRect" parent="Decorations"]
+offset_left = 480.0
+offset_top = 475.0
+offset_right = 492.0
+offset_bottom = 500.0
+color = Color(0.5, 0.35, 0.35, 0.5)
+
+; ============================================================
+; 灯光 - 走廊氛围
 ; ============================================================
 
 [node name="Lighting" type="Node2D" parent="."]
 
 [node name="Torch1" type="PointLight2D" parent="Lighting"]
-position = Vector2(200, 430)
+position = Vector2(200, 420)
 color = Color(1.0, 0.7, 0.3, 1)
-energy = 1.2
-texture_scale = 5.0
+energy = 1.0
+texture_scale = 4.0
 shadow_enabled = false
 
 [node name="Torch2" type="PointLight2D" parent="Lighting"]
-position = Vector2(600, 430)
+position = Vector2(600, 420)
 color = Color(1.0, 0.7, 0.3, 1)
-energy = 1.2
-texture_scale = 5.0
+energy = 1.0
+texture_scale = 4.0
 shadow_enabled = false
 
 [node name="AmbientLight" type="PointLight2D" parent="Lighting"]
-position = Vector2(400, 400)
+position = Vector2(400, 380)
 color = Color(0.3, 0.25, 0.4, 0.3)
-energy = 0.4
-texture_scale = 20.0
+energy = 0.3
+texture_scale = 18.0
 shadow_enabled = false
 blend_mode = 1
-
-; ============================================================
-; 装饰元素 (z_index=0, 默认层)
-; ============================================================
-
-[node name="Decorations" type="Node2D" parent="."]
-
-; --- 房子1 (深棕, 较矮) - 左侧走廊边 ---
-[node name="House01" type="StaticBody2D" parent="Decorations"]
-collision_layer = 4
-collision_mask = 0
-position = Vector2(120, 480)
-
-[node name="Wall" type="ColorRect" parent="Decorations/House01"]
-offset_left = -24.0
-offset_top = -40.0
-offset_right = 24.0
-offset_bottom = 0.0
-color = Color(0.45, 0.32, 0.25, 1)
-
-[node name="Roof" type="ColorRect" parent="Decorations/House01"]
-offset_left = -28.0
-offset_top = -72.0
-offset_right = 28.0
-offset_bottom = -40.0
-color = Color(0.35, 0.18, 0.15, 1)
-
-[node name="Door" type="ColorRect" parent="Decorations/House01"]
-offset_left = -6.0
-offset_top = -28.0
-offset_right = 6.0
-offset_bottom = 0.0
-color = Color(0.25, 0.15, 0.1, 1)
-
-[node name="Window" type="ColorRect" parent="Decorations/House01"]
-offset_left = -20.0
-offset_top = -36.0
-offset_right = -12.0
-offset_bottom = -28.0
-color = Color(0.6, 0.5, 0.2, 0.7)
-
-[node name="Window2" type="ColorRect" parent="Decorations/House01"]
-offset_left = 12.0
-offset_top = -36.0
-offset_right = 20.0
-offset_bottom = -28.0
-color = Color(0.6, 0.5, 0.2, 0.7)
-
-[node name="HouseCollision" type="CollisionShape2D" parent="Decorations/House01"]
-position = Vector2(0, -20)
-shape = SubResource("shape_house")
-
-; --- 房子2 (深棕, 较矮) - 右侧走廊边 ---
-[node name="House02" type="StaticBody2D" parent="Decorations"]
-collision_layer = 4
-collision_mask = 0
-position = Vector2(680, 480)
-
-[node name="Wall" type="ColorRect" parent="Decorations/House02"]
-offset_left = -24.0
-offset_top = -40.0
-offset_right = 24.0
-offset_bottom = 0.0
-color = Color(0.45, 0.32, 0.25, 1)
-
-[node name="Roof" type="ColorRect" parent="Decorations/House02"]
-offset_left = -28.0
-offset_top = -72.0
-offset_right = 28.0
-offset_bottom = -40.0
-color = Color(0.35, 0.18, 0.15, 1)
-
-[node name="Door" type="ColorRect" parent="Decorations/House02"]
-offset_left = -6.0
-offset_top = -28.0
-offset_right = 6.0
-offset_bottom = 0.0
-color = Color(0.25, 0.15, 0.1, 1)
-
-[node name="Window" type="ColorRect" parent="Decorations/House02"]
-offset_left = -20.0
-offset_top = -36.0
-offset_right = -12.0
-offset_bottom = -28.0
-color = Color(0.6, 0.5, 0.2, 0.7)
-
-[node name="Window2" type="ColorRect" parent="Decorations/House02"]
-offset_left = 12.0
-offset_top = -36.0
-offset_right = 20.0
-offset_bottom = -28.0
-color = Color(0.6, 0.5, 0.2, 0.7)
-
-[node name="HouseCollision" type="CollisionShape2D" parent="Decorations/House02"]
-position = Vector2(0, -20)
-shape = SubResource("shape_house")
-
-; --- 房子3 (更矮, 背景, 无碰撞) - 远景 ---
-[node name="House03" type="Node2D" parent="Decorations"]
-position = Vector2(400, 260)
-z_index = -1
-
-[node name="Wall" type="ColorRect" parent="Decorations/House03"]
-offset_left = -20.0
-offset_top = -30.0
-offset_right = 20.0
-offset_bottom = 0.0
-color = Color(0.3, 0.22, 0.18, 0.6)
-
-[node name="Roof" type="ColorRect" parent="Decorations/House03"]
-offset_left = -24.0
-offset_top = -54.0
-offset_right = 24.0
-offset_bottom = -30.0
-color = Color(0.25, 0.15, 0.12, 0.6)
-
-; --- 小树 (矮小, 暗色) ---
-
-[node name="Tree01" type="Node2D" parent="Decorations"]
-position = Vector2(160, 498)
-
-[node name="Trunk" type="ColorRect" parent="Decorations/Tree01"]
-offset_left = -4.0
-offset_top = -40.0
-offset_right = 4.0
-offset_bottom = 0.0
-color = Color(0.3, 0.2, 0.12, 1)
-
-[node name="Crown" type="ColorRect" parent="Decorations/Tree01"]
-offset_left = -12.0
-offset_top = -64.0
-offset_right = 12.0
-offset_bottom = -36.0
-color = Color(0.15, 0.35, 0.12, 1)
-
-[node name="Tree02" type="Node2D" parent="Decorations"]
-position = Vector2(350, 498)
-
-[node name="Trunk" type="ColorRect" parent="Decorations/Tree02"]
-offset_left = -3.0
-offset_top = -32.0
-offset_right = 3.0
-offset_bottom = 0.0
-color = Color(0.3, 0.2, 0.12, 1)
-
-[node name="Crown" type="ColorRect" parent="Decorations/Tree02"]
-offset_left = -10.0
-offset_top = -52.0
-offset_right = 10.0
-offset_bottom = -28.0
-color = Color(0.18, 0.38, 0.15, 1)
-
-[node name="Tree03" type="Node2D" parent="Decorations"]
-position = Vector2(550, 498)
-
-[node name="Trunk" type="ColorRect" parent="Decorations/Tree03"]
-offset_left = -4.0
-offset_top = -36.0
-offset_right = 4.0
-offset_bottom = 0.0
-color = Color(0.3, 0.2, 0.12, 1)
-
-[node name="Crown" type="ColorRect" parent="Decorations/Tree03"]
-offset_left = -11.0
-offset_top = -58.0
-offset_right = 11.0
-offset_bottom = -32.0
-color = Color(0.15, 0.35, 0.12, 1)
-
-; --- 石头 (小, 散落) ---
-
-[node name="Rock01" type="ColorRect" parent="Decorations"]
-offset_left = 236.0
-offset_top = 492.0
-offset_right = 252.0
-offset_bottom = 500.0
-color = Color(0.35, 0.33, 0.38, 1)
-
-[node name="Rock02" type="ColorRect" parent="Decorations"]
-offset_left = 454.0
-offset_top = 492.0
-offset_right = 474.0
-offset_bottom = 500.0
-color = Color(0.38, 0.35, 0.4, 1)
-
-[node name="Rock03" type="ColorRect" parent="Decorations"]
-offset_left = 594.0
-offset_top = 494.0
-offset_right = 608.0
-offset_bottom = 500.0
-color = Color(0.35, 0.33, 0.38, 1)
-
-; --- NPC (半透明暗色) ---
-
-[node name="NPC01" type="ColorRect" parent="Decorations"]
-offset_left = 244.0
-offset_top = 468.0
-offset_right = 260.0
-offset_bottom = 500.0
-color = Color(0.4, 0.35, 0.5, 0.5)
-
-[node name="NPC02" type="ColorRect" parent="Decorations"]
-offset_left = 544.0
-offset_top = 468.0
-offset_right = 560.0
-offset_bottom = 500.0
-color = Color(0.5, 0.35, 0.35, 0.5)
-
-; --- 跳跃平台 (石板色) ---
-
-[node name="Platform1" type="StaticBody2D" parent="Decorations"]
-collision_layer = 4
-collision_mask = 0
-position = Vector2(300, 380)
-
-[node name="PlatformVisual" type="ColorRect" parent="Decorations/Platform1"]
-offset_left = -80.0
-offset_top = -10.0
-offset_right = 80.0
-offset_bottom = 10.0
-color = Color(0.4, 0.35, 0.38, 1)
-
-[node name="PlatformCollision" type="CollisionShape2D" parent="Decorations/Platform1"]
-shape = SubResource("shape_platform")
-
-[node name="Platform2" type="StaticBody2D" parent="Decorations"]
-collision_layer = 4
-collision_mask = 0
-position = Vector2(550, 350)
-
-[node name="PlatformVisual" type="ColorRect" parent="Decorations/Platform2"]
-offset_left = -80.0
-offset_top = -10.0
-offset_right = 80.0
-offset_bottom = 10.0
-color = Color(0.4, 0.35, 0.38, 1)
-
-[node name="PlatformCollision" type="CollisionShape2D" parent="Decorations/Platform2"]
-shape = SubResource("shape_platform")
 
 ; ============================================================
 ; 玩家出生标记

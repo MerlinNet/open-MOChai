@@ -27,16 +27,16 @@ size = Vector2(100, 300)
 size = Vector2(200, 80)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_left"]
-size = Vector2(32, 1056)
+size = Vector2(64, 1080)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_right"]
-size = Vector2(32, 1056)
+size = Vector2(64, 1080)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_top"]
-size = Vector2(1600, 32)
+size = Vector2(1624, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_bottom"]
-size = Vector2(1600, 32)
+size = Vector2(1624, 64)
 
 [node name="TownSquare" type="Node2D"]
 script = ExtResource("1_script")
@@ -111,36 +111,36 @@ shape = SubResource("RectangleShape2D_bridge")
 
 [node name="Boundaries" type="Node2D" parent="Collisions"]
 
-[node name="LeftWall" type="StaticBody2D" parent="Boundaries"]
+[node name="LeftWall" type="StaticBody2D" parent="Collisions/Boundaries"]
 position = Vector2(16, 528)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/LeftWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Boundaries/LeftWall"]
 shape = SubResource("RectangleShape2D_wall_left")
 
-[node name="RightWall" type="StaticBody2D" parent="Boundaries"]
+[node name="RightWall" type="StaticBody2D" parent="Collisions/Boundaries"]
 position = Vector2(1584, 528)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/RightWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Boundaries/RightWall"]
 shape = SubResource("RectangleShape2D_wall_right")
 
-[node name="TopWall" type="StaticBody2D" parent="Boundaries"]
+[node name="TopWall" type="StaticBody2D" parent="Collisions/Boundaries"]
 position = Vector2(800, 16)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/TopWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Boundaries/TopWall"]
 shape = SubResource("RectangleShape2D_wall_top")
 
-[node name="BottomWall" type="StaticBody2D" parent="Boundaries"]
+[node name="BottomWall" type="StaticBody2D" parent="Collisions/Boundaries"]
 position = Vector2(800, 1040)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BottomWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Boundaries/BottomWall"]
 shape = SubResource("RectangleShape2D_wall_bottom")
 
 [node name="Markers" type="Node2D" parent="."]

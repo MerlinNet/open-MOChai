@@ -57,9 +57,34 @@ func _on_touch_float() -> void:
 
 ## 设置玩家初始位置
 func _setup_player() -> void:
-	if player and player_spawn:
-		player.global_position = player_spawn.global_position
-		print("[TownSquare] 玩家已放置到出生点")
+	if player:
+		# 修复路径：player_spawn 在 Markers 下
+		var spawn_marker = get_node_or_null("Markers/PlayerSpawn")
+		if spawn_marker:
+			player.global_position = spawn_marker.global_position
+			print("[TownSquare] 玩家已放置到出生点: %s" % spawn_marker.global_position)
+		else:
+			player.global_position = Vector2(720, 660)
+			print("[TownSquare] 使用默认出生点")
+		
+		# 强制验证碰撞配置
+		if player is CharacterBody2D:
+			player.collision_layer = 1
+			player.collision_mask = 15  # 检测所有层 1+2+3+4
+			player.motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
+			print("[TownSquare] 玩家碰撞配置: layer=%d mask=%d mode=%d" % [
+				player.collision_layer, player.collision_mask, player.motion_mode])
+			
+			# 检查玩家碰撞形状
+			var col_shape = player.get_node_or_null("CollisionShape2D")
+			if col_shape:
+				print("[TownSquare] 玩家碰撞形状: disabled=%s shape=%s" % [
+					col_shape.disabled, col_shape.shape])
+			else:
+				push_warning("[TownSquare] 玩家没有 CollisionShape2D!")
+	
+	# 验证所有碰撞体
+	_verify_collisions()
 
 
 ## 缓存所有 NPC 标记点位置
@@ -160,3 +185,35 @@ func spawn_player() -> void:
 	var spawn_pos: Vector2 = get_spawn_position()
 	emit_signal("player_spawned", spawn_pos)
 	print("[TownSquare] 玩家已出生在: %s" % spawn_pos)
+
+
+## 验证场景中所有碰撞体配置
+func _verify_collisions() -> void:
+	var collisions_node = get_node_or_null("Collisions")
+	if not collisions_node:
+		push_warning("[TownSquare] Collisions 节点未找到!")
+		return
+	
+	var count = 0
+	for body in collisions_node.get_children():
+		# 递归检查所有子节点
+		_check_body(body, count)
+		for sub_body in body.get_children():
+			_check_body(sub_body, count)
+	
+	print("[TownSquare] 共验证 %d 个碰撞体" % count)
+
+
+func _check_body(body: Node, count: int) -> void:
+	if body is StaticBody2D:
+		count += 1
+		var col_shape = body.get_node_or_null("CollisionShape2D")
+		var shape_info = "无"
+		var is_disabled = true
+		if col_shape and col_shape.shape:
+			shape_info = str(col_shape.shape)
+			is_disabled = col_shape.disabled
+		print("[TownSquare] 碰撞体 %s: layer=%d mask=%d shape=%s disabled=%s" % [
+			body.name, body.collision_layer, body.collision_mask, shape_info, is_disabled])
+		if body.collision_layer == 0:
+			push_warning("[TownSquare] 碰撞体 %s 的 collision_layer 为 0!" % body.name)

@@ -54,7 +54,7 @@ z_index = 1
 [node name="LeftShop" type="StaticBody2D" parent="Buildings"]
 position = Vector2(200, 380)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/LeftShop"]
 shape = SubResource("RectangleShape2D_shop_left")
@@ -62,7 +62,7 @@ shape = SubResource("RectangleShape2D_shop_left")
 [node name="RightInn" type="StaticBody2D" parent="Buildings"]
 position = Vector2(1280, 350)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/RightInn"]
 shape = SubResource("RectangleShape2D_inn_right")
@@ -70,7 +70,7 @@ shape = SubResource("RectangleShape2D_inn_right")
 [node name="Castle" type="StaticBody2D" parent="Buildings"]
 position = Vector2(800, 180)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/Castle"]
 shape = SubResource("RectangleShape2D_castle")
@@ -80,7 +80,7 @@ shape = SubResource("RectangleShape2D_castle")
 [node name="Fountain" type="StaticBody2D" parent="Decorations"]
 position = Vector2(720, 560)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/Fountain"]
 shape = SubResource("CircleShape2D_fountain")
@@ -88,7 +88,7 @@ shape = SubResource("CircleShape2D_fountain")
 [node name="TeleportTree" type="StaticBody2D" parent="Decorations"]
 position = Vector2(1050, 700)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/TeleportTree"]
 shape = SubResource("RectangleShape2D_tree")
@@ -96,7 +96,7 @@ shape = SubResource("RectangleShape2D_tree")
 [node name="Waterfall" type="StaticBody2D" parent="Decorations"]
 position = Vector2(100, 680)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/Waterfall"]
 shape = SubResource("RectangleShape2D_waterfall")
@@ -104,7 +104,7 @@ shape = SubResource("RectangleShape2D_waterfall")
 [node name="Bridge" type="StaticBody2D" parent="Decorations"]
 position = Vector2(720, 960)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/Bridge"]
 shape = SubResource("RectangleShape2D_bridge")

@@ -31,7 +31,7 @@ func _update_player_reference() -> void:
 	var players := get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		player = players[0]
-		print("[GameManager] 已获取玩家引用: %s" % player.name)
+		Logger.info("Game", "已获取玩家引用: %s" % player.name)
 	else:
 		push_warning("[GameManager] 未找到玩家节点 (确保玩家在 'player' 组中)")
 
@@ -39,7 +39,7 @@ func _update_player_reference() -> void:
 ## 注册玩家 (供外部调用)
 func register_player(p: Node) -> void:
 	player = p
-	print("[GameManager] 玩家已注册: %s" % p.name)
+	Logger.info("Game", "玩家已注册: %s" % p.name)
 
 
 func start_game() -> void:

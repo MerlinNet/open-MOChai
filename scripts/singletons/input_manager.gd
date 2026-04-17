@@ -7,4 +7,4 @@ extends Node
 
 
 func _ready() -> void:
-	print("[InputManager] 已加载 (InputMap 配置见 project.godot)")
+	Logger.debug("Input", "已加载 (InputMap 配置见 project.godot)")

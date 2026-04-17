@@ -50,13 +50,13 @@ signal dusk_started
 
 @export_group("夜间覆盖层")
 @export var night_overlay_enabled: bool = true  ## 是否启用夜间覆盖层
-@export var night_overlay_color: Color = Color(0.05, 0.05, 0.15, 0.4)  ## 夜间覆盖层颜色（降低alpha）
-@export var dusk_overlay_color: Color = Color(0.1, 0.05, 0.15, 0.2)  ## 黄昏覆盖层颜色
-@export var dawn_overlay_color: Color = Color(0.15, 0.08, 0.05, 0.15)  ## 黎明覆盖层颜色
+@export var night_overlay_color: Color = Color(0.15, 0.15, 0.25, 1.0)  ## 夜间覆盖层颜色（提高亮度）
+@export var dusk_overlay_color: Color = Color(0.6, 0.5, 0.4, 1.0)  ## 黄昏覆盖层颜色
+@export var dawn_overlay_color: Color = Color(0.7, 0.6, 0.5, 1.0)  ## 黎明覆盖层颜色
 
 @export_group("街灯设置")
-@export var street_light_energy: float = 2.5  ## 街灯能量（提高）
-@export var street_light_dusk_energy: float = 1.2  ## 黄昏街灯能量
+@export var street_light_energy: float = 1.5  ## 街灯能量
+@export var street_light_dusk_energy: float = 1.0  ## 黄昏街灯能量
 @export var street_light_shadow_enabled: bool = true  ## 街灯是否启用阴影
 
 @export_group("阴影设置")
@@ -226,6 +226,10 @@ func set_night_overlay(overlay: CanvasModulate) -> void:
 func register_light(light: Node) -> void:
 	if light not in _registered_lights:
 		_registered_lights.append(light)
+		# 为 PointLight2D 自动创建光照纹理
+		if light is PointLight2D and light.texture == null:
+			light.texture = _create_light_texture()
+			GameLogger.debug("DayNight", "已为 %s 创建光照纹理" % light.name)
 		GameLogger.debug("DayNight", "已注册灯光: %s" % light.name)
 
 
@@ -329,7 +333,13 @@ func _update_ambient_light() -> void:
 
 	if _ambient_light is PointLight2D:
 		_ambient_light.color = target_color
-		_ambient_light.energy = target_energy * 0.5
+		# 夜间环境光需要足够的亮度
+		if is_night():
+			_ambient_light.energy = 0.4
+			_ambient_light.enabled = true
+		else:
+			_ambient_light.energy = target_energy * 0.3
+			_ambient_light.enabled = true
 	elif _ambient_light is DirectionalLight2D:
 		_ambient_light.color = target_color
 		_ambient_light.energy = target_energy
@@ -527,5 +537,24 @@ func _get_interpolated_energy(factor: float) -> float:
 		TimePeriod.NIGHT:
 			from_energy = night_energy
 			to_energy = night_energy
-	
+
 	return lerp(from_energy, to_energy, factor)
+
+
+## 创建光照纹理（径向渐变）
+func _create_light_texture() -> GradientTexture2D:
+	var gradient := Gradient.new()
+	# 从中心亮到边缘暗
+	gradient.add_point(0.0, Color(1, 1, 1, 1))  # 中心：白色，完全不透明
+	gradient.add_point(0.5, Color(1, 1, 1, 0.8))  # 中间：稍微透明
+	gradient.add_point(1.0, Color(1, 1, 1, 0.0))  # 边缘：完全透明
+
+	var texture := GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.width = 128
+	texture.height = 128
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.5)
+	texture.fill_to = Vector2(1.0, 0.5)
+
+	return texture

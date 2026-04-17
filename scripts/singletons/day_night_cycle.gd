@@ -50,13 +50,13 @@ signal dusk_started
 
 @export_group("夜间覆盖层")
 @export var night_overlay_enabled: bool = true  ## 是否启用夜间覆盖层
-@export var night_overlay_color: Color = Color(0.02, 0.02, 0.08, 0.7)  ## 夜间覆盖层颜色（深蓝黑色）
-@export var dusk_overlay_color: Color = Color(0.1, 0.05, 0.15, 0.35)  ## 黄昏覆盖层颜色
-@export var dawn_overlay_color: Color = Color(0.15, 0.08, 0.05, 0.25)  ## 黎明覆盖层颜色
+@export var night_overlay_color: Color = Color(0.05, 0.05, 0.15, 0.4)  ## 夜间覆盖层颜色（降低alpha）
+@export var dusk_overlay_color: Color = Color(0.1, 0.05, 0.15, 0.2)  ## 黄昏覆盖层颜色
+@export var dawn_overlay_color: Color = Color(0.15, 0.08, 0.05, 0.15)  ## 黎明覆盖层颜色
 
 @export_group("街灯设置")
-@export var street_light_energy: float = 1.5  ## 街灯能量
-@export var street_light_dusk_energy: float = 0.8  ## 黄昏街灯能量
+@export var street_light_energy: float = 2.5  ## 街灯能量（提高）
+@export var street_light_dusk_energy: float = 1.2  ## 黄昏街灯能量
 @export var street_light_shadow_enabled: bool = true  ## 街灯是否启用阴影
 
 @export_group("阴影设置")
@@ -341,6 +341,7 @@ func _update_night_overlay() -> void:
 	if _night_overlay == null or not night_overlay_enabled:
 		if _night_overlay:
 			_night_overlay.color = Color(1, 1, 1, 1)
+		GameLogger.debug("DayNight", "夜间覆盖层: 未启用或未设置")
 		return
 
 	var target_color: Color = Color(1, 1, 1, 1)
@@ -361,6 +362,7 @@ func _update_night_overlay() -> void:
 			target_color = Color(1, 1, 1, 1)
 
 	_night_overlay.color = target_color
+	GameLogger.debug("DayNight", "夜间覆盖层颜色: %s" % target_color)
 
 
 ## 更新所有注册的灯光
@@ -368,6 +370,8 @@ func _update_registered_lights() -> void:
 	var is_night_time: bool = is_night()
 	var is_dusk_time: bool = current_period == TimePeriod.DUSK
 	var is_dawn_time: bool = current_period == TimePeriod.DAWN
+
+	GameLogger.debug("DayNight", "更新灯光: 夜晚=%s, 灯光数=%d" % [is_night_time, _registered_lights.size()])
 
 	for light in _registered_lights:
 		if light == null:
@@ -379,6 +383,7 @@ func _update_registered_lights() -> void:
 				light.enabled = true
 				light.energy = street_light_energy
 				light.shadow_enabled = street_light_shadow_enabled
+				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.1f" % [light.name, light.energy])
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
 				light.energy = street_light_dusk_energy

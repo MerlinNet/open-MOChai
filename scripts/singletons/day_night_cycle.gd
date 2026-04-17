@@ -27,7 +27,7 @@ signal dusk_started
 @export_group("时间设置")
 @export var cycle_duration_minutes: float = 24.0  ## 完整昼夜周期时长（游戏内分钟数）
 @export var real_seconds_per_game_hour: float = 60.0  ## 现实秒数对应游戏内1小时
-@export var start_hour: float = 8.0  ## 初始小时 (0-24)
+@export var start_hour: float = 21.0  ## 初始小时 (0-24) - 默认晚上9点
 @export var auto_advance: bool = true  ## 是否自动推进时间
 
 @export_group("环境光设置")

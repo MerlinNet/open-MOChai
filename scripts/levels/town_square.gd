@@ -34,7 +34,7 @@ var portal_positions: Dictionary = {}
 # 昼夜系统配置
 @export_group("昼夜系统")
 @export var enable_day_night_cycle: bool = true  ## 是否启用昼夜循环
-@export var start_hour: float = 8.0  ## 初始时间（小时）
+@export var start_hour: float = 21.0  ## 初始时间（小时）- 默认晚上9点
 @export var time_speed: float = 1.0  ## 时间流逝速度倍率
 
 

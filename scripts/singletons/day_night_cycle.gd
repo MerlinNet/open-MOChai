@@ -46,7 +46,18 @@ signal dusk_started
 @export var dawn_energy: float = 0.5
 @export var day_energy: float = 0.55
 @export var dusk_energy: float = 0.4
-@export var night_energy: float = 0.15
+@export var night_energy: float = 0.08  ## 夜间能量大幅降低，营造真实夜晚
+
+@export_group("夜间覆盖层")
+@export var night_overlay_enabled: bool = true  ## 是否启用夜间覆盖层
+@export var night_overlay_color: Color = Color(0.02, 0.02, 0.08, 0.7)  ## 夜间覆盖层颜色（深蓝黑色）
+@export var dusk_overlay_color: Color = Color(0.1, 0.05, 0.15, 0.35)  ## 黄昏覆盖层颜色
+@export var dawn_overlay_color: Color = Color(0.15, 0.08, 0.05, 0.25)  ## 黎明覆盖层颜色
+
+@export_group("街灯设置")
+@export var street_light_energy: float = 1.5  ## 街灯能量
+@export var street_light_dusk_energy: float = 0.8  ## 黄昏街灯能量
+@export var street_light_shadow_enabled: bool = true  ## 街灯是否启用阴影
 
 @export_group("阴影设置")
 @export var shadow_angle_offset: float = 45.0  ## 阴影角度偏移
@@ -66,6 +77,7 @@ var time_speed_multiplier: float = 1.0
 var _environment: WorldEnvironment = null
 var _ambient_light: Node = null
 var _registered_lights: Array[Node] = []
+var _night_overlay: CanvasModulate = null  ## 夜间覆盖层引用
 
 
 func _ready() -> void:
@@ -204,6 +216,12 @@ func set_ambient_light(light: Node) -> void:
 	_update_ambient_light()
 
 
+## 设置夜间覆盖层引用
+func set_night_overlay(overlay: CanvasModulate) -> void:
+	_night_overlay = overlay
+	_update_night_overlay()
+
+
 ## 注册灯光节点（用于批量更新）
 func register_light(light: Node) -> void:
 	if light not in _registered_lights:
@@ -277,9 +295,10 @@ func _on_period_changed(new_period: TimePeriod, old_period: TimePeriod) -> void:
 		TimePeriod.DUSK:
 			emit_signal("dusk_started")
 			GameLogger.info("DayNight", "黄昏时分")
-	
+
 	_update_environment()
 	_update_ambient_light()
+	_update_night_overlay()
 	_update_registered_lights()
 
 
@@ -303,11 +322,11 @@ func _update_environment() -> void:
 func _update_ambient_light() -> void:
 	if _ambient_light == null:
 		return
-	
+
 	var blend_factor: float = _get_blend_factor()
 	var target_color: Color = _get_interpolated_ambient_color(blend_factor)
 	var target_energy: float = _get_interpolated_energy(blend_factor)
-	
+
 	if _ambient_light is PointLight2D:
 		_ambient_light.color = target_color
 		_ambient_light.energy = target_energy * 0.5
@@ -315,6 +334,33 @@ func _update_ambient_light() -> void:
 		_ambient_light.color = target_color
 		_ambient_light.energy = target_energy
 		_update_shadow_direction(_ambient_light)
+
+
+## 更新夜间覆盖层
+func _update_night_overlay() -> void:
+	if _night_overlay == null or not night_overlay_enabled:
+		if _night_overlay:
+			_night_overlay.color = Color(1, 1, 1, 1)
+		return
+
+	var target_color: Color = Color(1, 1, 1, 1)
+	var blend_factor: float = _get_blend_factor()
+
+	match current_period:
+		TimePeriod.NIGHT:
+			# 夜间：深蓝黑色覆盖
+			target_color = night_overlay_color
+		TimePeriod.DUSK:
+			# 黄昏：渐变到夜间
+			target_color = Color(1, 1, 1, 1).lerp(dusk_overlay_color, blend_factor)
+		TimePeriod.DAWN:
+			# 黎明：从夜间渐变到白天
+			target_color = dawn_overlay_color.lerp(Color(1, 1, 1, 1), blend_factor)
+		TimePeriod.MORNING, TimePeriod.NOON, TimePeriod.AFTERNOON:
+			# 白天：无覆盖
+			target_color = Color(1, 1, 1, 1)
+
+	_night_overlay.color = target_color
 
 
 ## 更新所有注册的灯光
@@ -331,10 +377,12 @@ func _update_registered_lights() -> void:
 			# 白天关闭点光源，夜晚/黄昏/黎明开启
 			if is_night_time:
 				light.enabled = true
-				light.energy = 1.0
+				light.energy = street_light_energy
+				light.shadow_enabled = street_light_shadow_enabled
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
-				light.energy = 0.5
+				light.energy = street_light_dusk_energy
+				light.shadow_enabled = street_light_shadow_enabled
 			else:
 				# 白天关闭点光源
 				light.energy = 0.0
@@ -346,11 +394,13 @@ func _update_registered_lights() -> void:
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
 				light.energy = 0.3
+				light.shadow_enabled = true
 				_update_shadow_direction(light)
 			else:
 				# 白天
 				light.enabled = true
-				light.energy = 0.4
+				light.energy = 0.5
+				light.shadow_enabled = true
 				_update_shadow_direction(light)
 
 

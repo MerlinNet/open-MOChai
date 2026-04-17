@@ -119,6 +119,7 @@ scale = Vector2(0.8, 0.8)
 sprite_frames = SubResource("SpriteFrames_player")
 animation = &"down"
 offset = Vector2(0, -8)
+shadow_mode = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 8)

@@ -21,6 +21,7 @@ signal player_spawned(spawn_position: Vector2)
 @onready var lights_node: Node2D = $Lights
 @onready var sun_light: DirectionalLight2D = $SunLight
 @onready var ambient_light: PointLight2D = $Lights/AmbientLight
+@onready var night_overlay: CanvasModulate = $NightOverlay
 
 # NPC 位置字典 (供外部查询)
 var npc_positions: Dictionary = {}
@@ -222,6 +223,10 @@ func _setup_day_night_cycle() -> void:
 		GameLogger.info("TownSquare", "昼夜循环已禁用")
 		return
 
+	# 注册夜间覆盖层
+	if night_overlay:
+		DayNightCycle.set_night_overlay(night_overlay)
+
 	# 先注册所有灯光
 	if ambient_light:
 		DayNightCycle.set_ambient_light(ambient_light)
@@ -295,7 +300,7 @@ func _on_night_started() -> void:
 func _update_background_tint() -> void:
 	if not background:
 		return
-	
+
 	# 根据时间段调整背景颜色
 	var tint_color: Color
 	match DayNightCycle.current_period:
@@ -306,8 +311,9 @@ func _update_background_tint() -> void:
 		DayNightCycle.TimePeriod.DUSK:
 			tint_color = Color(1.0, 0.85, 0.8, 1.0)
 		DayNightCycle.TimePeriod.NIGHT:
-			tint_color = Color(0.7, 0.75, 0.9, 1.0)
-	
+			# 夜间背景变暗，但由夜间覆盖层处理主要暗化效果
+			tint_color = Color(0.6, 0.65, 0.8, 1.0)
+
 	background.modulate = tint_color
 
 

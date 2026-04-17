@@ -74,8 +74,6 @@ var _registered_lights: Array[Node] = []
 func _ready() -> void:
 	current_hour = start_hour
 	current_period = _get_period_from_hour(current_hour)
-	# 初始化灯光状态
-	_update_registered_lights()
 	print("[DayNightCycle] 昼夜系统已初始化，当前时间: %02d:%02d" % [int(current_hour), int(current_minute)])
 
 
@@ -108,9 +106,6 @@ func _process(delta: float) -> void:
 
 	# 发射时间变化信号
 	emit_signal("time_changed", current_hour, current_minute)
-
-	# 每帧更新灯光（平滑过渡）
-	_update_registered_lights()
 
 
 # ==================== 公共 API ====================
@@ -340,10 +335,10 @@ func _update_registered_lights() -> void:
 			# 白天关闭点光源，夜晚/黄昏/黎明开启
 			if is_night_time:
 				light.enabled = true
-				light.energy = lerp(light.energy, 1.0, 0.1)
+				light.energy = 1.0
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
-				light.energy = lerp(light.energy, 0.5, 0.1)
+				light.energy = 0.5
 			else:
 				# 白天关闭点光源
 				light.energy = 0.0

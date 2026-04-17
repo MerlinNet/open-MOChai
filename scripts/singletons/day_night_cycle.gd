@@ -77,7 +77,8 @@ var time_speed_multiplier: float = 1.0
 var _environment: WorldEnvironment = null
 var _ambient_light: Node = null
 var _registered_lights: Array[Node] = []
-var _night_overlay: CanvasModulate = null  ## 夜间覆盖层引用
+var _night_overlay: Control = null  ## 夜间覆盖层引用 (ColorRect with Shader)
+var _night_shader: ShaderMaterial = null  ## 着色器材质引用
 
 
 func _ready() -> void:
@@ -217,8 +218,12 @@ func set_ambient_light(light: Node) -> void:
 
 
 ## 设置夜间覆盖层引用
-func set_night_overlay(overlay: CanvasModulate) -> void:
+func set_night_overlay(overlay: Control) -> void:
 	_night_overlay = overlay
+	# 获取着色器材质
+	if overlay and overlay.material is ShaderMaterial:
+		_night_shader = overlay.material
+		GameLogger.debug("DayNight", "夜间覆盖层着色器已设置")
 	_update_night_overlay()
 
 
@@ -348,31 +353,22 @@ func _update_ambient_light() -> void:
 
 ## 更新夜间覆盖层
 func _update_night_overlay() -> void:
-	if _night_overlay == null or not night_overlay_enabled:
+	if _night_shader == null or not night_overlay_enabled:
 		if _night_overlay:
-			_night_overlay.color = Color(1, 1, 1, 1)
+			_night_overlay.modulate = Color(1, 1, 1, 0)
 		GameLogger.debug("DayNight", "夜间覆盖层: 未启用或未设置")
 		return
 
-	var target_color: Color = Color(1, 1, 1, 1)
-	var blend_factor: float = _get_blend_factor()
+	# 计算当前时间进度 (0.0 - 1.0)
+	var time_progress: float = (current_hour + current_minute / 60.0) / 24.0
 
-	match current_period:
-		TimePeriod.NIGHT:
-			# 夜间：深蓝黑色覆盖
-			target_color = night_overlay_color
-		TimePeriod.DUSK:
-			# 黄昏：渐变到夜间
-			target_color = Color(1, 1, 1, 1).lerp(dusk_overlay_color, blend_factor)
-		TimePeriod.DAWN:
-			# 黎明：从夜间渐变到白天
-			target_color = dawn_overlay_color.lerp(Color(1, 1, 1, 1), blend_factor)
-		TimePeriod.MORNING, TimePeriod.NOON, TimePeriod.AFTERNOON:
-			# 白天：无覆盖
-			target_color = Color(1, 1, 1, 1)
+	# 更新着色器参数
+	_night_shader.set_shader_parameter("current_time", time_progress)
+	_night_shader.set_shader_parameter("night_intensity", 0.6)
+	_night_shader.set_shader_parameter("night_color", night_overlay_color)
+	_night_shader.set_shader_parameter("twilight_color", dusk_overlay_color)
 
-	_night_overlay.color = target_color
-	GameLogger.debug("DayNight", "夜间覆盖层颜色: %s" % target_color)
+	GameLogger.debug("DayNight", "夜间覆盖层: time=%.2f" % time_progress)
 
 
 ## 更新所有注册的灯光

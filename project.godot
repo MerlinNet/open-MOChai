@@ -28,7 +28,7 @@ DayNightCycle="*res://scripts/singletons/day_night_cycle.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg", "res://addons/dynamic_day_night_cycles/plugin.cfg")
 
 [input]
 

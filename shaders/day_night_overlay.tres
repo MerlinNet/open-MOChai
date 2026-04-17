@@ -1,0 +1,65 @@
+shader_type canvas_item;
+blend_mode multiply;
+
+// 时间进度 (0.0 = 午夜, 0.25 = 日出, 0.5 = 正午, 0.75 = 日落)
+uniform float current_time : hint_range(0, 1) = 0.0;
+
+// 夜间颜色覆盖强度
+uniform float night_intensity : hint_range(0, 1) = 0.7;
+
+// 日出/日落持续时间 (占一天的百分比)
+uniform float twilight_duration : hint_range(0.05, 0.2) = 0.1;
+
+// 日出时间 (默认 6:00 = 0.25)
+uniform float sunrise_time : hint_range(0, 1) = 0.25;
+
+// 日落时间 (默认 18:00 = 0.75)
+uniform float sunset_time : hint_range(0, 1) = 0.75;
+
+// 夜间颜色 (深蓝)
+uniform vec4 night_color : source_color = vec4(0.05, 0.05, 0.15, 1.0);
+
+// 黄昏/黎明颜色 (橙红)
+uniform vec4 twilight_color : source_color = vec4(0.4, 0.2, 0.1, 1.0);
+
+// 白天颜色 (明亮)
+uniform vec4 day_color : source_color = vec4(1.0, 1.0, 0.95, 1.0);
+
+void fragment() {
+	vec4 target_color;
+	float blend;
+	
+	// 计算当前时间段
+	if (current_time < sunrise_time - twilight_duration * 0.5) {
+		// 深夜
+		target_color = night_color;
+		blend = night_intensity;
+	}
+	else if (current_time < sunrise_time + twilight_duration * 0.5) {
+		// 日出/黎明
+		float t = (current_time - (sunrise_time - twilight_duration * 0.5)) / twilight_duration;
+		target_color = mix(night_color, twilight_color, t);
+		blend = mix(night_intensity, 0.3, t);
+	}
+	else if (current_time < sunset_time - twilight_duration * 0.5) {
+		// 白天
+		float t = (current_time - (sunrise_time + twilight_duration * 0.5)) / (sunset_time - sunrise_time - twilight_duration);
+		target_color = mix(twilight_color, day_color, min(t * 2.0, 1.0));
+		blend = 0.0;
+	}
+	else if (current_time < sunset_time + twilight_duration * 0.5) {
+		// 日落/黄昏
+		float t = (current_time - (sunset_time - twilight_duration * 0.5)) / twilight_duration;
+		target_color = mix(day_color, twilight_color, t);
+		blend = mix(0.0, night_intensity * 0.5, t);
+	}
+	else {
+		// 夜晚
+		float t = (current_time - (sunset_time + twilight_duration * 0.5)) / (1.0 - sunset_time - twilight_duration * 0.5);
+		target_color = mix(twilight_color, night_color, min(t * 2.0, 1.0));
+		blend = mix(night_intensity * 0.5, night_intensity, t);
+	}
+	
+	// 应用颜色混合
+	COLOR = vec4(target_color.rgb, blend);
+}

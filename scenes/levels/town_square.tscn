@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/maps/town_square.jpg" id="2_bg"]
 [ext_resource type="PackedScene" uid="uid://c8player0001" path="res://scenes/player/player.tscn" id="3_player"]
 [ext_resource type="PackedScene" uid="uid://c8touchctrl0001" path="res://scenes/ui/touch_controls.tscn" id="4_touch"]
+[ext_resource type="Shader" path="res://shaders/day_night_overlay.tres" id="shader_day_night"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_shop_left"]
 size = Vector2(240, 200)
@@ -259,8 +260,19 @@ texture_scale = 50.0
 shadow_enabled = false
 enabled = false
 
-[node name="NightOverlay" type="CanvasModulate" parent="."]
-color = Color(1, 1, 1, 1)
+[node name="NightOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1600.0
+offset_bottom = 1080.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_night")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_night"]
+shader = ExtResource("shader_day_night")
 
 [node name="SunLight" type="DirectionalLight2D" parent="."]
 position = Vector2(800, 0)

@@ -55,8 +55,8 @@ signal dusk_started
 @export var dawn_overlay_color: Color = Color(0.7, 0.6, 0.5, 1.0)  ## 黎明覆盖层颜色
 
 @export_group("街灯设置")
-@export var street_light_energy: float = 1.5  ## 街灯能量
-@export var street_light_dusk_energy: float = 1.0  ## 黄昏街灯能量
+@export var street_light_energy: float = 0.8  ## 街灯能量（降低）
+@export var street_light_dusk_energy: float = 0.5  ## 黄昏街灯能量
 @export var street_light_shadow_enabled: bool = true  ## 街灯是否启用阴影
 
 @export_group("阴影设置")
@@ -389,18 +389,16 @@ func _update_registered_lights() -> void:
 
 		if light is PointLight2D:
 			# 白天关闭点光源，夜晚/黄昏/黎明开启
+			# 不修改能量值，使用场景中设置的值
 			if is_night_time:
 				light.enabled = true
-				light.energy = street_light_energy
 				light.shadow_enabled = street_light_shadow_enabled
-				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.1f" % [light.name, light.energy])
+				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.2f" % [light.name, light.energy])
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
-				light.energy = street_light_dusk_energy
 				light.shadow_enabled = street_light_shadow_enabled
 			else:
 				# 白天关闭点光源
-				light.energy = 0.0
 				light.enabled = false
 		elif light is DirectionalLight2D:
 			# 太阳光：白天开启，夜晚关闭
@@ -541,18 +539,20 @@ func _get_interpolated_energy(factor: float) -> float:
 	return lerp(from_energy, to_energy, factor)
 
 
-## 创建光照纹理（径向渐变）
+## 创建光照纹理（径向渐变，平滑圆形）
 func _create_light_texture() -> GradientTexture2D:
 	var gradient := Gradient.new()
-	# 从中心亮到边缘暗
-	gradient.add_point(0.0, Color(1, 1, 1, 1))  # 中心：白色，完全不透明
-	gradient.add_point(0.5, Color(1, 1, 1, 0.8))  # 中间：稍微透明
+	# 从中心亮到边缘暗，更平滑的过渡
+	gradient.add_point(0.0, Color(1, 1, 1, 1.0))  # 中心：完全不透明
+	gradient.add_point(0.3, Color(1, 1, 1, 0.7))  # 内圈
+	gradient.add_point(0.6, Color(1, 1, 1, 0.4))  # 中圈
+	gradient.add_point(0.85, Color(1, 1, 1, 0.15))  # 外圈
 	gradient.add_point(1.0, Color(1, 1, 1, 0.0))  # 边缘：完全透明
 
 	var texture := GradientTexture2D.new()
 	texture.gradient = gradient
-	texture.width = 128
-	texture.height = 128
+	texture.width = 256  # 提高分辨率
+	texture.height = 256
 	texture.fill = GradientTexture2D.FILL_RADIAL
 	texture.fill_from = Vector2(0.5, 0.5)
 	texture.fill_to = Vector2(1.0, 0.5)

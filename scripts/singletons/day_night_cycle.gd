@@ -1,8 +1,8 @@
 ## 昼夜循环管理器单例
 ## @ai-author Claude (2026-04-17)
 ## @ai-task 实现完整的昼夜交替系统，支持自动时间流逝、环境光变化、阴影调整
+## Note: 此文件作为 autoload 单例注册，通过 DayNightCycle 全局访问
 
-class_name DayNightCycle
 extends Node
 
 ## 时间段枚举

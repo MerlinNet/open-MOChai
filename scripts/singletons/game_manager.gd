@@ -21,6 +21,25 @@ var player: Node = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# 等待场景加载完成后获取玩家引用
+	await get_tree().process_frame
+	_update_player_reference()
+
+
+## 更新玩家引用
+func _update_player_reference() -> void:
+	var players := get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		player = players[0]
+		GameLogger.info("Game", "已获取玩家引用: %s" % player.name)
+	else:
+		push_warning("[GameManager] 未找到玩家节点 (确保玩家在 'player' 组中)")
+
+
+## 注册玩家 (供外部调用)
+func register_player(p: Node) -> void:
+	player = p
+	GameLogger.info("Game", "玩家已注册: %s" % p.name)
 
 
 func start_game() -> void:

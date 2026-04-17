@@ -72,41 +72,45 @@ func _is_inside_button(pos: Vector2) -> bool:
 
 
 func _create_circle_texture() -> void:
-	# 创建圆形按钮纹理
-	var size := 90
-	var image := Image.create(size, size, false, Image.FORMAT_RGBA8)
-	image.fill(Color.TRANSPARENT)
-	
-	var center := Vector2(size / 2.0, size / 2.0)
-	var radius := size / 2.0 - 2
-	
-	# 绘制外圈
-	for x in range(size):
-		for y in range(size):
-			var dist := Vector2(x, y).distance_to(center)
-			if dist <= radius and dist > radius - 4:
-				# 外圈
-				image.set_pixel(x, y, Color(1, 1, 1, 0.9))
-			elif dist <= radius - 4:
-				# 内部填充
-				var alpha := 0.7 - (dist / radius) * 0.2
-				image.set_pixel(x, y, Color(button_color.r, button_color.g, button_color.b, alpha))
-	
-	var texture := ImageTexture.create_from_image(image)
-	texture_normal = texture
-	
-	# 创建按下状态的纹理
-	var pressed_image := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	# 使用 StyleBoxFlat 替代逐像素绘制，性能更优
+	var style := StyleBoxFlat.new()
+	style.bg_color = button_color
+	style.set_corner_radius_all(45)  # 圆角半径 = size/2
+	style.set_border_width_all(2)
+	style.border_color = Color(1, 1, 1, 0.9)
+
+	# 使用 TextureRect 渲染 StyleBox
+	var size := Vector2(90, 90)
+
+	# 创建普通状态纹理
+	var normal_image := Image.create(int(size.x), int(size.y), false, Image.FORMAT_RGBA8)
+	normal_image.fill(Color.TRANSPARENT)
+	var normal_texture := ImageTexture.create_from_image(normal_image)
+	texture_normal = normal_texture
+
+	# 创建按下状态纹理
+	var pressed_image := Image.create(int(size.x), int(size.y), false, Image.FORMAT_RGBA8)
 	pressed_image.fill(Color.TRANSPARENT)
-	
-	for x in range(size):
-		for y in range(size):
-			var dist := Vector2(x, y).distance_to(center)
-			if dist <= radius:
-				var alpha := 0.9 - (dist / radius) * 0.3
-				pressed_image.set_pixel(x, y, Color(button_color.r * 0.7, button_color.g * 0.7, button_color.b * 0.7, alpha))
-	
 	texture_pressed = ImageTexture.create_from_image(pressed_image)
+
+	# 存储样式供绘制使用
+	_button_style = style
+	_button_size = size
+
+
+var _button_style: StyleBoxFlat
+var _button_size: Vector2
+
+
+func _draw() -> void:
+	if _button_style:
+		var is_pressed_state := _is_pressed or (texture_pressed and texture_pressed == texture_normal)
+		var draw_style := _button_style.duplicate()
+		if is_pressed_state:
+			draw_style.bg_color = Color(button_color.r * 0.7, button_color.g * 0.7, button_color.b * 0.7, 0.9)
+		else:
+			draw_style.bg_color = button_color
+		draw_style.draw(get_canvas_item(), Rect2(Vector2.ZERO, _button_size))
 
 
 # 检查按钮是否被按下

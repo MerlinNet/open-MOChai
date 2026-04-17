@@ -32,7 +32,7 @@ signal dusk_started
 
 @export_group("环境光设置")
 @export var dawn_ambient_color: Color = Color(1.0, 0.7, 0.5, 1.0)  ## 黎明环境光
-@export var day_ambient_color: Color = Color(1.0, 0.95, 0.9, 1.0)  ## 白天环境光
+@export var day_ambient_color: Color = Color(0.9, 0.88, 0.85, 1.0)  ## 白天环境光（柔和暖白）
 @export var dusk_ambient_color: Color = Color(1.0, 0.5, 0.3, 1.0)  ## 黄昏环境光
 @export var night_ambient_color: Color = Color(0.2, 0.25, 0.4, 1.0)  ## 夜晚环境光
 
@@ -43,10 +43,10 @@ signal dusk_started
 @export var night_sky_color: Color = Color(0.05, 0.05, 0.15, 1.0)
 
 @export_group("环境光强度")
-@export var dawn_energy: float = 0.8
-@export var day_energy: float = 1.0
-@export var dusk_energy: float = 0.6
-@export var night_energy: float = 0.2
+@export var dawn_energy: float = 0.5
+@export var day_energy: float = 0.55
+@export var dusk_energy: float = 0.4
+@export var night_energy: float = 0.15
 
 @export_group("阴影设置")
 @export var shadow_angle_offset: float = 45.0  ## 阴影角度偏移
@@ -74,6 +74,8 @@ var _registered_lights: Array[Node] = []
 func _ready() -> void:
 	current_hour = start_hour
 	current_period = _get_period_from_hour(current_hour)
+	# 初始化灯光状态
+	_update_registered_lights()
 	print("[DayNightCycle] 昼夜系统已初始化，当前时间: %02d:%02d" % [int(current_hour), int(current_minute)])
 
 
@@ -103,9 +105,12 @@ func _process(delta: float) -> void:
 	
 	# 检查时间段变化
 	_check_period_change()
-	
+
 	# 发射时间变化信号
 	emit_signal("time_changed", current_hour, current_minute)
+
+	# 每帧更新灯光（平滑过渡）
+	_update_registered_lights()
 
 
 # ==================== 公共 API ====================
@@ -324,19 +329,25 @@ func _update_ambient_light() -> void:
 ## 更新所有注册的灯光
 func _update_registered_lights() -> void:
 	var is_night_time: bool = is_night()
-	
+	var is_dusk_time: bool = current_period == TimePeriod.DUSK
+	var is_dawn_time: bool = current_period == TimePeriod.DAWN
+
 	for light in _registered_lights:
 		if light == null:
 			continue
-		
+
 		if light is PointLight2D:
+			# 白天关闭点光源，夜晚/黄昏/黎明开启
 			if is_night_time:
 				light.enabled = true
-				light.energy = lerp(light.energy, 1.5, 0.1)
+				light.energy = lerp(light.energy, 1.0, 0.1)
+			elif is_dusk_time or is_dawn_time:
+				light.enabled = true
+				light.energy = lerp(light.energy, 0.5, 0.1)
 			else:
-				light.energy = lerp(light.energy, 0.0, 0.1)
-				if light.energy < 0.1:
-					light.enabled = false
+				# 白天关闭点光源
+				light.energy = 0.0
+				light.enabled = false
 		elif light is DirectionalLight2D:
 			_update_shadow_direction(light)
 

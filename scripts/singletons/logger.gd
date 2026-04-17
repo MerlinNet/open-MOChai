@@ -22,6 +22,7 @@ enum LogLevel {
 
 ## 日志文件路径
 var _log_dir: String = "user://logs/"
+var _shared_log_dir: String = "/storage/emulated/0/Documents/open-MOChai/logs/"
 var _current_log_file: String = ""
 var _log_buffer: Array[String] = []
 
@@ -36,9 +37,16 @@ func _ready() -> void:
 
 
 func _setup_log_directory() -> void:
+	# 创建 user://logs 目录
 	var dir := DirAccess.open("user://")
 	if not dir.dir_exists("logs"):
 		dir.make_dir("logs")
+
+	# 创建共享存储日志目录
+	var shared_dir := DirAccess.open("/storage/emulated/0/Documents/open-MOChai/")
+	if shared_dir and not shared_dir.dir_exists("logs"):
+		shared_dir.make_dir("logs")
+
 	_cleanup_old_logs()
 
 
@@ -97,7 +105,8 @@ func _format_message(level: LogLevel, category: String, message: String) -> Stri
 func _write_to_file(content: String) -> void:
 	if not write_to_file:
 		return
-	
+
+	# 写入 user:// 目录
 	var file_path := _log_dir + _current_log_file
 	var file := FileAccess.open(file_path, FileAccess.READ_WRITE)
 	if file == null:
@@ -105,6 +114,15 @@ func _write_to_file(content: String) -> void:
 	if file:
 		file.seek_end()
 		file.store_line(content)
+
+	# 同时写入共享存储目录（方便调试）
+	var shared_path := _shared_log_dir + _current_log_file
+	var shared_file := FileAccess.open(shared_path, FileAccess.READ_WRITE)
+	if shared_file == null:
+		shared_file = FileAccess.open(shared_path, FileAccess.WRITE)
+	if shared_file:
+		shared_file.seek_end()
+		shared_file.store_line(content)
 
 
 ## 核心日志方法

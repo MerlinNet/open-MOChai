@@ -45,8 +45,8 @@ func _ready() -> void:
 	_setup_player()
 	_connect_touch_controls()
 	_setup_day_night_cycle()
-	Logger.info("TownSquare", "城镇广场已加载")
-	Logger.debug("TownSquare", "玩家出生点: %s" % get_spawn_position())
+	GameLogger.info("TownSquare", "城镇广场已加载")
+	GameLogger.debug("TownSquare", "玩家出生点: %s" % get_spawn_position())
 
 
 ## 连接触摸控件信号
@@ -73,10 +73,10 @@ func _setup_player() -> void:
 		var spawn_marker = get_node_or_null("Markers/PlayerSpawn")
 		if spawn_marker:
 			player.global_position = spawn_marker.global_position
-			Logger.info("TownSquare", "玩家已放置到出生点: %s" % spawn_marker.global_position)
+			GameLogger.info("TownSquare", "玩家已放置到出生点: %s" % spawn_marker.global_position)
 		else:
 			player.global_position = Vector2(720, 660)
-			Logger.info("TownSquare", "使用默认出生点")
+			GameLogger.info("TownSquare", "使用默认出生点")
 
 	# 验证所有碰撞体
 	_verify_collisions()
@@ -91,7 +91,7 @@ func _cache_npc_positions() -> void:
 	for child in npc_points.get_children():
 		if child is Marker2D:
 			npc_positions[child.name] = child.global_position
-	Logger.info("TownSquare", "已缓存 %d 个 NPC 位置" % npc_positions.size())
+	GameLogger.info("TownSquare", "已缓存 %d 个 NPC 位置" % npc_positions.size())
 
 
 ## 缓存所有传送点位置
@@ -103,14 +103,14 @@ func _cache_portal_positions() -> void:
 	for child in portals.get_children():
 		if child is Marker2D:
 			portal_positions[child.name] = child.global_position
-	Logger.info("TownSquare", "已缓存 %d 个传送点位置" % portal_positions.size())
+	GameLogger.info("TownSquare", "已缓存 %d 个传送点位置" % portal_positions.size())
 
 
 ## 打印场景信息
 func _print_scene_info() -> void:
 	if background and background.texture:
 		var tex_size: Vector2 = background.texture.get_size()
-		Logger.info("TownSquare", "背景纹理尺寸: %dx%d" % [tex_size.x, tex_size.y])
+		GameLogger.info("TownSquare", "背景纹理尺寸: %dx%d" % [tex_size.x, tex_size.y])
 
 
 ## 获取玩家出生坐标
@@ -160,7 +160,7 @@ func get_center_position() -> Vector2:
 func interact_with_npc(npc_name: String) -> void:
 	if npc_positions.has(npc_name):
 		emit_signal("npc_interacted", npc_name)
-		Logger.info("TownSquare", "玩家与 %s 交互" % npc_name)
+		GameLogger.info("TownSquare", "玩家与 %s 交互" % npc_name)
 	else:
 		push_warning("[TownSquare] 尝试与不存在的 NPC 交互: %s" % npc_name)
 
@@ -170,7 +170,7 @@ func interact_with_npc(npc_name: String) -> void:
 func enter_portal(portal_name: String) -> void:
 	if portal_positions.has(portal_name):
 		emit_signal("portal_entered", portal_name)
-		Logger.info("TownSquare", "玩家进入传送点: %s" % portal_name)
+		GameLogger.info("TownSquare", "玩家进入传送点: %s" % portal_name)
 	else:
 		push_warning("[TownSquare] 尝试进入不存在的传送点: %s" % portal_name)
 
@@ -179,7 +179,7 @@ func enter_portal(portal_name: String) -> void:
 func spawn_player() -> void:
 	var spawn_pos: Vector2 = get_spawn_position()
 	emit_signal("player_spawned", spawn_pos)
-	Logger.info("TownSquare", "玩家已出生在: %s" % spawn_pos)
+	GameLogger.info("TownSquare", "玩家已出生在: %s" % spawn_pos)
 
 
 ## 验证场景中所有碰撞体配置
@@ -196,7 +196,7 @@ func _verify_collisions() -> void:
 		for sub_body in body.get_children():
 			_check_body(sub_body, count)
 	
-	Logger.info("TownSquare", "共验证 %d 个碰撞体" % count)
+	GameLogger.info("TownSquare", "共验证 %d 个碰撞体" % count)
 
 
 func _check_body(body: Node, count: int) -> void:
@@ -208,7 +208,7 @@ func _check_body(body: Node, count: int) -> void:
 		if col_shape and col_shape.shape:
 			shape_info = str(col_shape.shape)
 			is_disabled = col_shape.disabled
-		Logger.info("TownSquare", "碰撞体 %s: layer=%d mask=%d shape=%s disabled=%s" % [
+		GameLogger.info("TownSquare", "碰撞体 %s: layer=%d mask=%d shape=%s disabled=%s" % [
 			body.name, body.collision_layer, body.collision_mask, shape_info, is_disabled])
 		if body.collision_layer == 0:
 			push_warning("[TownSquare] 碰撞体 %s 的 collision_layer 为 0!" % body.name)
@@ -219,7 +219,7 @@ func _check_body(body: Node, count: int) -> void:
 ## 初始化昼夜系统
 func _setup_day_night_cycle() -> void:
 	if not enable_day_night_cycle:
-		Logger.info("TownSquare", "昼夜循环已禁用")
+		GameLogger.info("TownSquare", "昼夜循环已禁用")
 		return
 	
 	# 设置初始时间
@@ -245,7 +245,7 @@ func _setup_day_night_cycle() -> void:
 	DayNightCycle.dusk_started.connect(_on_dusk_started)
 	DayNightCycle.night_started.connect(_on_night_started)
 	
-	Logger.info("TownSquare", "昼夜系统已初始化，初始时间: %s" % DayNightCycle.get_time_string())
+	GameLogger.info("TownSquare", "昼夜系统已初始化，初始时间: %s" % DayNightCycle.get_time_string())
 
 
 ## 注册场景中的所有灯光
@@ -257,7 +257,7 @@ func _register_scene_lights() -> void:
 		if child is PointLight2D and child.name != "AmbientLight":
 			DayNightCycle.register_light(child)
 	
-	Logger.info("TownSquare", "已注册场景灯光到昼夜系统")
+	GameLogger.info("TownSquare", "已注册场景灯光到昼夜系统")
 
 
 ## 时间变化回调
@@ -269,7 +269,7 @@ func _on_time_changed(hour: float, minute: float) -> void:
 ## 时间段变化回调
 func _on_period_changed(new_period: DayNightCycle.TimePeriod, old_period: DayNightCycle.TimePeriod) -> void:
 	var period_name: String = DayNightCycle.get_period_name()
-	Logger.info("TownSquare", "时间段变化: %s" % period_name)
+	GameLogger.info("TownSquare", "时间段变化: %s" % period_name)
 	
 	# 更新背景色调（可选）
 	_update_background_tint()
@@ -277,19 +277,19 @@ func _on_period_changed(new_period: DayNightCycle.TimePeriod, old_period: DayNig
 
 ## 黎明开始回调
 func _on_dawn_started() -> void:
-	Logger.info("TownSquare", "黎明降临，城镇苏醒...")
+	GameLogger.info("TownSquare", "黎明降临，城镇苏醒...")
 	# 可以触发 NPC 开始活动等
 
 
 ## 黄昏开始回调
 func _on_dusk_started() -> void:
-	Logger.info("TownSquare", "黄昏时分，街灯点亮...")
+	GameLogger.info("TownSquare", "黄昏时分，街灯点亮...")
 	# 可以触发街灯亮起等
 
 
 ## 夜晚开始回调
 func _on_night_started() -> void:
-	Logger.info("TownSquare", "夜幕降临，城镇入眠...")
+	GameLogger.info("TownSquare", "夜幕降临，城镇入眠...")
 	# 可以触发 NPC 回家等
 
 

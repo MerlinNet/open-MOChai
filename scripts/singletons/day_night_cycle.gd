@@ -74,7 +74,7 @@ var _registered_lights: Array[Node] = []
 func _ready() -> void:
 	current_hour = start_hour
 	current_period = _get_period_from_hour(current_hour)
-	Logger.info("DayNight", "昼夜系统已初始化，当前时间: %02d:%02d" % [int(current_hour), int(current_minute)])
+	GameLogger.info("DayNight", "昼夜系统已初始化，当前时间: %02d:%02d" % [int(current_hour), int(current_minute)])
 
 
 func _process(delta: float) -> void:
@@ -99,7 +99,7 @@ func _process(delta: float) -> void:
 		current_hour = fmod(current_hour, 24.0)
 		day_count += 1
 		emit_signal("day_started", day_count)
-		Logger.info("DayNight", "新的一天开始！第 %d 天" % day_count)
+		GameLogger.info("DayNight", "新的一天开始！第 %d 天" % day_count)
 	
 	# 检查时间段变化
 	_check_period_change()
@@ -122,25 +122,25 @@ func set_time(hour: float, minute: float = 0.0) -> void:
 		_on_period_changed(current_period, old_period)
 	
 	emit_signal("time_changed", current_hour, current_minute)
-	Logger.info("DayNight", "时间已设置为: %02d:%02d" % [int(current_hour), int(current_minute)])
+	GameLogger.info("DayNight", "时间已设置为: %02d:%02d" % [int(current_hour), int(current_minute)])
 
 
 ## 设置时间流逝速度
 func set_time_speed(multiplier: float) -> void:
 	time_speed_multiplier = clamp(multiplier, 0.0, 100.0)
-	Logger.info("DayNight", "时间速度已设置为: %.1fx" % time_speed_multiplier)
+	GameLogger.info("DayNight", "时间速度已设置为: %.1fx" % time_speed_multiplier)
 
 
 ## 暂停时间流逝
 func pause_time() -> void:
 	auto_advance = false
-	Logger.debug("DayNight", "时间已暂停")
+	GameLogger.debug("DayNight", "时间已暂停")
 
 
 ## 恢复时间流逝
 func resume_time() -> void:
 	auto_advance = true
-	Logger.debug("DayNight", "时间已恢复")
+	GameLogger.debug("DayNight", "时间已恢复")
 
 
 ## 跳转到指定时间段
@@ -212,7 +212,7 @@ func set_ambient_light(light: Node) -> void:
 func register_light(light: Node) -> void:
 	if light not in _registered_lights:
 		_registered_lights.append(light)
-		Logger.debug("DayNight", "已注册灯光: %s" % light.name)
+		GameLogger.debug("DayNight", "已注册灯光: %s" % light.name)
 
 
 ## 注销灯光节点
@@ -228,7 +228,7 @@ func register_all_lights_in_scene(root: Node) -> void:
 	for light in lights:
 		register_light(light)
 	
-	Logger.debug("DayNight", "共注册 %d 个灯光" % lights.size())
+	GameLogger.debug("DayNight", "共注册 %d 个灯光" % lights.size())
 
 
 # ==================== 内部方法 ====================
@@ -274,13 +274,13 @@ func _on_period_changed(new_period: TimePeriod, old_period: TimePeriod) -> void:
 	match new_period:
 		TimePeriod.DAWN:
 			emit_signal("dawn_started")
-			Logger.info("DayNight", "黎明降临")
+			GameLogger.info("DayNight", "黎明降临")
 		TimePeriod.NIGHT:
 			emit_signal("night_started")
-			Logger.info("DayNight", "夜幕降临")
+			GameLogger.info("DayNight", "夜幕降临")
 		TimePeriod.DUSK:
 			emit_signal("dusk_started")
-			Logger.info("DayNight", "黄昏时分")
+			GameLogger.info("DayNight", "黄昏时分")
 	
 	_update_environment()
 	_update_ambient_light()

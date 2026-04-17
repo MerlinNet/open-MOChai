@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ctownsquare0001"]
+[gd_scene load_steps=18 format=3 uid="uid://ctownsquare0001"]
 
 [ext_resource type="Script" path="res://scripts/levels/town_square.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/maps/town_square.jpg" id="2_bg"]
@@ -38,6 +38,9 @@ size = Vector2(1624, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_bottom"]
 size = Vector2(1624, 64)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_night"]
+shader = ExtResource("shader_day_night")
 
 [node name="TownSquare" type="Node2D"]
 script = ExtResource("1_script")
@@ -259,9 +262,6 @@ energy = 0.3
 texture_scale = 50.0
 shadow_enabled = false
 enabled = false
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_night"]
-shader = ExtResource("shader_day_night")
 
 [node name="NightOverlay" type="ColorRect" parent="."]
 anchors_preset = 15

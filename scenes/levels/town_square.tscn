@@ -260,6 +260,9 @@ texture_scale = 50.0
 shadow_enabled = false
 enabled = false
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_night"]
+shader = ExtResource("shader_day_night")
+
 [node name="NightOverlay" type="ColorRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
@@ -270,9 +273,6 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
 material = SubResource("ShaderMaterial_night")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_night"]
-shader = ExtResource("shader_day_night")
 
 [node name="SunLight" type="DirectionalLight2D" parent="."]
 position = Vector2(800, 0)

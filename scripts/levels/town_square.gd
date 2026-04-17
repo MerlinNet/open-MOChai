@@ -58,7 +58,7 @@ func _on_touch_float() -> void:
 ## 设置玩家初始位置
 func _setup_player() -> void:
 	if player:
-		# 修复路径：player_spawn 在 Markers 下
+		# 使用 Markers/PlayerSpawn 作为出生点
 		var spawn_marker = get_node_or_null("Markers/PlayerSpawn")
 		if spawn_marker:
 			player.global_position = spawn_marker.global_position
@@ -66,23 +66,7 @@ func _setup_player() -> void:
 		else:
 			player.global_position = Vector2(720, 660)
 			print("[TownSquare] 使用默认出生点")
-		
-		# 强制验证碰撞配置
-		if player is CharacterBody2D:
-			player.collision_layer = 1
-			player.collision_mask = 15  # 检测所有层 1+2+3+4
-			player.motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
-			print("[TownSquare] 玩家碰撞配置: layer=%d mask=%d mode=%d" % [
-				player.collision_layer, player.collision_mask, player.motion_mode])
-			
-			# 检查玩家碰撞形状
-			var col_shape = player.get_node_or_null("CollisionShape2D")
-			if col_shape:
-				print("[TownSquare] 玩家碰撞形状: disabled=%s shape=%s" % [
-					col_shape.disabled, col_shape.shape])
-			else:
-				push_warning("[TownSquare] 玩家没有 CollisionShape2D!")
-	
+
 	# 验证所有碰撞体
 	_verify_collisions()
 

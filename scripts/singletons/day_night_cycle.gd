@@ -340,7 +340,18 @@ func _update_registered_lights() -> void:
 				light.energy = 0.0
 				light.enabled = false
 		elif light is DirectionalLight2D:
-			_update_shadow_direction(light)
+			# 太阳光：白天开启，夜晚关闭
+			if is_night_time:
+				light.enabled = false
+			elif is_dusk_time or is_dawn_time:
+				light.enabled = true
+				light.energy = 0.3
+				_update_shadow_direction(light)
+			else:
+				# 白天
+				light.enabled = true
+				light.energy = 0.4
+				_update_shadow_direction(light)
 
 
 ## 更新阴影方向

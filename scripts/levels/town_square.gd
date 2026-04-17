@@ -221,30 +221,28 @@ func _setup_day_night_cycle() -> void:
 	if not enable_day_night_cycle:
 		GameLogger.info("TownSquare", "昼夜循环已禁用")
 		return
-	
-	# 设置初始时间
-	DayNightCycle.set_time(start_hour)
-	DayNightCycle.set_time_speed(time_speed)
-	
-	# 注册环境光
+
+	# 先注册所有灯光
 	if ambient_light:
 		DayNightCycle.set_ambient_light(ambient_light)
-	
-	# 注册太阳光（用于阴影）
+
 	if sun_light:
 		DayNightCycle.register_light(sun_light)
-	
-	# 注册所有场景灯光
+
 	if lights_node:
 		_register_scene_lights()
-	
+
+	# 再设置初始时间（会触发灯光更新）
+	DayNightCycle.set_time(start_hour)
+	DayNightCycle.set_time_speed(time_speed)
+
 	# 连接昼夜信号
 	DayNightCycle.time_changed.connect(_on_time_changed)
 	DayNightCycle.period_changed.connect(_on_period_changed)
 	DayNightCycle.dawn_started.connect(_on_dawn_started)
 	DayNightCycle.dusk_started.connect(_on_dusk_started)
 	DayNightCycle.night_started.connect(_on_night_started)
-	
+
 	GameLogger.info("TownSquare", "昼夜系统已初始化，初始时间: %s" % DayNightCycle.get_time_string())
 
 

@@ -62,9 +62,6 @@ var day_count: int = 1
 ## 时间流逝速度倍率
 var time_speed_multiplier: float = 1.0
 
-## 累计时间（用于精确计算）
-var _accumulated_time: float = 0.0
-
 ## 环境引用
 var _environment: WorldEnvironment = null
 var _ambient_light: Node = null
@@ -80,27 +77,23 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not auto_advance:
 		return
-	
-	# 计算时间流逝
-	var time_increment: float = (delta / real_seconds_per_game_hour) * time_speed_multiplier
-	_accumulated_time += time_increment
-	
-	# 更新分钟和小时
-	current_minute += _accumulated_time * 60.0
-	
-	if current_minute >= 60.0:
-		var hours_to_add: int = int(current_minute / 60.0)
-		current_hour += hours_to_add
-		current_minute = fmod(current_minute, 60.0)
-		_accumulated_time = 0.0
-	
+
+	# 计算时间流逝（delta秒 / 每游戏小时对应现实秒数）
+	var hours_elapsed: float = (delta / real_seconds_per_game_hour) * time_speed_multiplier
+	current_minute += hours_elapsed * 60.0
+
+	# 处理分钟溢出
+	while current_minute >= 60.0:
+		current_minute -= 60.0
+		current_hour += 1.0
+
 	# 处理跨天
 	if current_hour >= 24.0:
 		current_hour = fmod(current_hour, 24.0)
 		day_count += 1
 		emit_signal("day_started", day_count)
 		GameLogger.info("DayNight", "新的一天开始！第 %d 天" % day_count)
-	
+
 	# 检查时间段变化
 	_check_period_change()
 
@@ -116,11 +109,14 @@ func set_time(hour: float, minute: float = 0.0) -> void:
 	current_hour = clamp(hour, 0.0, 23.999)
 	current_minute = clamp(minute, 0.0, 59.999)
 	current_period = _get_period_from_hour(current_hour)
-	
+
 	if current_period != old_period:
 		emit_signal("period_changed", current_period, old_period)
 		_on_period_changed(current_period, old_period)
-	
+	else:
+		# 即使时间段没变，也要更新灯光状态
+		_update_registered_lights()
+
 	emit_signal("time_changed", current_hour, current_minute)
 	GameLogger.info("DayNight", "时间已设置为: %02d:%02d" % [int(current_hour), int(current_minute)])
 

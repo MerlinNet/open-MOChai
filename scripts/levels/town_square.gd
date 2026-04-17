@@ -11,9 +11,9 @@ signal portal_entered(portal_name: String)
 signal player_spawned(spawn_position: Vector2)
 
 # 节点引用
-@onready var player_spawn: Marker2D = $PlayerSpawn
-@onready var npc_points: Node2D = $NPCPoints
-@onready var portals: Node2D = $Portals
+@onready var player_spawn: Marker2D = $Markers/PlayerSpawn
+@onready var npc_points: Node2D = $Markers/NPCPoints
+@onready var portals: Node2D = $Markers/Portals
 @onready var background: Sprite2D = $Background
 @onready var player: Node2D = $Player
 @onready var touch_controls: CanvasLayer = $TouchControls

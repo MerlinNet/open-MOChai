@@ -247,6 +247,14 @@ texture_scale = 100.0
 shadow_enabled = false
 blend_mode = 1
 
+[node name="SunLight" type="DirectionalLight2D" parent="."]
+position = Vector2(800, 0)
+color = Color(1.0, 0.95, 0.9, 1)
+energy = 0.8
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_opacity = 0.5
+
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(720, 660)
 groups = ["player"]

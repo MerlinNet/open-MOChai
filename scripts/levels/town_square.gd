@@ -21,7 +21,7 @@ signal player_spawned(spawn_position: Vector2)
 @onready var lights_node: Node2D = $Lights
 @onready var sun_light: DirectionalLight2D = $SunLight
 @onready var ambient_light: PointLight2D = $Lights/AmbientLight
-@onready var night_overlay: CanvasModulate = $NightOverlay
+@onready var night_overlay: Control = $NightOverlay
 
 # NPC 位置字典 (供外部查询)
 var npc_positions: Dictionary = {}

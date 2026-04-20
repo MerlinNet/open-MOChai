@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6jy5cxl5fffs"
-path="res://.godot/imported/4_walk_5.png-07a64ac7225d7565b34266ff6d3d8f15.ctex"
+uid="uid://d1i5yc1ghx8e4"
+path="res://.godot/imported/town_square.jpg-d3d93b0f7635406dab23d1e1d6134fba.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/player/4_walk_5.png"
-dest_files=["res://.godot/imported/4_walk_5.png-07a64ac7225d7565b34266ff6d3d8f15.ctex"]
+source_file="res://assets/sprites/maps/town_square.jpg"
+dest_files=["res://.godot/imported/town_square.jpg-d3d93b0f7635406dab23d1e1d6134fba.ctex"]
 
 [params]
 

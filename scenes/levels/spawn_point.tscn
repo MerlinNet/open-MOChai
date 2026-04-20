@@ -95,7 +95,7 @@ color = Color(0.20, 0.12, 0.10, 0.4)
 
 [node name="BoundaryLeft" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(8, 300)
 
 [node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryLeft"]
@@ -103,7 +103,7 @@ shape = SubResource("shape_boundary_h")
 
 [node name="BoundaryRight" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(792, 300)
 
 [node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryRight"]
@@ -111,7 +111,7 @@ shape = SubResource("shape_boundary_h")
 
 [node name="BoundaryTop" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 8)
 
 [node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryTop"]
@@ -119,7 +119,7 @@ shape = SubResource("shape_boundary_v")
 
 [node name="BoundaryBottom" type="StaticBody2D" parent="Boundary"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 592)
 
 [node name="Collision" type="CollisionShape2D" parent="Boundary/BoundaryBottom"]
@@ -131,7 +131,7 @@ shape = SubResource("shape_boundary_v")
 
 [node name="Ground" type="StaticBody2D" parent="."]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 524)
 
 [node name="GroundVisual" type="ColorRect" parent="Ground"]
@@ -163,7 +163,7 @@ z_index = 1
 ; --- 主前景横条 (横穿画面中间，棕色石墙/栅栏) ---
 [node name="ForegroundBar" type="StaticBody2D" parent="Foreground"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 445)
 
 [node name="BarVisual" type="ColorRect" parent="Foreground/ForegroundBar"]
@@ -230,7 +230,7 @@ color = Color(0.10, 0.08, 0.12, 0.7)
 ; 上方走廊墙 (前景横条上方，形成上走廊边界)
 [node name="UpperWall" type="StaticBody2D" parent="Corridor"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 350)
 
 [node name="UpperWallVisual" type="ColorRect" parent="Corridor/UpperWall"]
@@ -246,7 +246,7 @@ shape = SubResource("shape_branch_wall")
 ; 左侧走廊墙
 [node name="LeftWall" type="StaticBody2D" parent="Corridor"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(100, 400)
 
 [node name="LeftWallVisual" type="ColorRect" parent="Corridor/LeftWall"]
@@ -262,7 +262,7 @@ shape = SubResource("shape_boundary_h")
 ; 右侧走廊墙
 [node name="RightWall" type="StaticBody2D" parent="Corridor"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(700, 400)
 
 [node name="RightWallVisual" type="ColorRect" parent="Corridor/RightWall"]
@@ -344,7 +344,7 @@ color = Color(0.5, 0.4, 0.2, 0.4)
 ; --- 房子1 (左走廊边, 矮) ---
 [node name="House01" type="StaticBody2D" parent="Decorations"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(170, 498)
 
 [node name="Wall" type="ColorRect" parent="Decorations/House01"]
@@ -389,7 +389,7 @@ shape = SubResource("shape_house")
 ; --- 房子2 (右走廊边, 矮) ---
 [node name="House02" type="StaticBody2D" parent="Decorations"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(630, 498)
 
 [node name="Wall" type="ColorRect" parent="Decorations/House02"]

@@ -193,14 +193,14 @@ func _verify_collisions() -> void:
 	var count = 0
 	for body in collisions_node.get_children():
 		# 递归检查所有子节点
-		_check_body(body, count)
+		count = _check_body(body, count)
 		for sub_body in body.get_children():
-			_check_body(sub_body, count)
+			count = _check_body(sub_body, count)
 	
 	GameLogger.info("TownSquare", "共验证 %d 个碰撞体" % count)
 
 
-func _check_body(body: Node, count: int) -> void:
+func _check_body(body: Node, count: int) -> int:
 	if body is StaticBody2D:
 		count += 1
 		var col_shape = body.get_node_or_null("CollisionShape2D")
@@ -213,6 +213,7 @@ func _check_body(body: Node, count: int) -> void:
 			body.name, body.collision_layer, body.collision_mask, shape_info, is_disabled])
 		if body.collision_layer == 0:
 			push_warning("[TownSquare] 碰撞体 %s 的 collision_layer 为 0!" % body.name)
+	return count
 
 
 # ==================== 昼夜系统集成 ====================

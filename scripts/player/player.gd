@@ -42,7 +42,9 @@ func _ready() -> void:
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	# 碰撞层和掩码 (层1=玩家, 层2=敌人, 层3=环境, 层4=收集品)
 	collision_layer = 1  # 玩家在层 1
-	collision_mask = 14  # 检测层 2+3+4 (敌人+环境+收集品)
+	collision_mask = 15  # 检测层 1+2+3+4 (全部层，确保碰撞万无一失)
+	# 增大安全边距，防止高速移动时穿透薄墙
+	safe_margin = 2.0
 
 
 func _physics_process(delta: float) -> void:

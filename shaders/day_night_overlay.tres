@@ -1,0 +1,47 @@
+[gd_resource type="Shader" format=3 uid="uid://daynightshader001"]
+
+[resource]
+code = "shader_type canvas_item;
+blend_mode multiply;
+
+uniform float current_time : hint_range(0, 1) = 0.0;
+uniform float night_intensity : hint_range(0, 1) = 0.85;
+uniform float twilight_duration : hint_range(0.05, 0.2) = 0.1;
+uniform float sunrise_time : hint_range(0, 1) = 0.25;
+uniform float sunset_time : hint_range(0, 1) = 0.75;
+uniform vec4 night_color : source_color = vec4(0.02, 0.02, 0.08, 1.0);
+uniform vec4 twilight_color : source_color = vec4(0.3, 0.15, 0.1, 1.0);
+uniform vec4 day_color : source_color = vec4(1.0, 1.0, 0.95, 1.0);
+
+void fragment() {
+	vec4 target_color;
+	float blend;
+	
+	if (current_time < sunrise_time - twilight_duration * 0.5) {
+		target_color = night_color;
+		blend = night_intensity;
+	}
+	else if (current_time < sunrise_time + twilight_duration * 0.5) {
+		float t = (current_time - (sunrise_time - twilight_duration * 0.5)) / twilight_duration;
+		target_color = mix(night_color, twilight_color, t);
+		blend = mix(night_intensity, 0.4, t);
+	}
+	else if (current_time < sunset_time - twilight_duration * 0.5) {
+		float t = (current_time - (sunrise_time + twilight_duration * 0.5)) / (sunset_time - sunrise_time - twilight_duration);
+		target_color = mix(twilight_color, day_color, min(t * 2.0, 1.0));
+		blend = 0.0;
+	}
+	else if (current_time < sunset_time + twilight_duration * 0.5) {
+		float t = (current_time - (sunset_time - twilight_duration * 0.5)) / twilight_duration;
+		target_color = mix(day_color, twilight_color, t);
+		blend = mix(0.0, night_intensity * 0.6, t);
+	}
+	else {
+		float t = (current_time - (sunset_time + twilight_duration * 0.5)) / (1.0 - sunset_time - twilight_duration * 0.5);
+		target_color = mix(twilight_color, night_color, min(t * 2.0, 1.0));
+		blend = mix(night_intensity * 0.6, night_intensity, t);
+	}
+	
+	COLOR = vec4(target_color.rgb, blend);
+}
+"

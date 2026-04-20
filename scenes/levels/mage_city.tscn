@@ -47,7 +47,7 @@ color = Color(0.5, 0.5, 0.45, 1)
 
 [node name="MagicShop" type="StaticBody2D" parent="Buildings"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(120, 200)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/MagicShop"]
@@ -55,7 +55,7 @@ shape = SubResource("RectangleShape2D_shop")
 
 [node name="Inn" type="StaticBody2D" parent="Buildings"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(680, 200)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/Inn"]
@@ -63,7 +63,7 @@ shape = SubResource("RectangleShape2D_shop")
 
 [node name="Blacksmith" type="StaticBody2D" parent="Buildings"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(120, 480)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/Blacksmith"]
@@ -71,7 +71,7 @@ shape = SubResource("RectangleShape2D_blacksmith")
 
 [node name="GuildHall" type="StaticBody2D" parent="Buildings"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(680, 480)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/GuildHall"]
@@ -99,7 +99,7 @@ color = Color(0.2, 0.5, 0.8, 0.8)
 
 [node name="FountainCollision" type="StaticBody2D" parent="Fountain"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Fountain/FountainCollision"]
 shape = SubResource("CircleShape2D_fountain")
@@ -218,7 +218,7 @@ shadow_enabled = false
 
 [node name="BoundaryLeft" type="StaticBody2D" parent="Boundaries"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(8, 320)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryLeft"]
@@ -226,7 +226,7 @@ shape = SubResource("RectangleShape2D_boundary_h")
 
 [node name="BoundaryRight" type="StaticBody2D" parent="Boundaries"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(792, 320)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryRight"]
@@ -234,7 +234,7 @@ shape = SubResource("RectangleShape2D_boundary_h")
 
 [node name="BoundaryTop" type="StaticBody2D" parent="Boundaries"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryTop"]
@@ -242,7 +242,7 @@ shape = SubResource("RectangleShape2D_boundary_v")
 
 [node name="BoundaryBottom" type="StaticBody2D" parent="Boundaries"]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 position = Vector2(400, 632)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/BoundaryBottom"]

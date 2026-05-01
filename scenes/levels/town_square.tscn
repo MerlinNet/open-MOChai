@@ -258,7 +258,7 @@ enabled = false
 [node name="AmbientLight" type="PointLight2D" parent="Lights"]
 position = Vector2(800, 528)
 color = Color(0.6, 0.6, 0.8, 1)
-energy = 0.3
+energy = 0.1
 texture_scale = 50.0
 shadow_enabled = false
 enabled = false
@@ -277,7 +277,7 @@ material = SubResource("ShaderMaterial_night")
 [node name="SunLight" type="DirectionalLight2D" parent="."]
 position = Vector2(800, 0)
 color = Color(1.0, 0.95, 0.9, 1)
-energy = 0.5
+energy = 0.3
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_opacity = 0.6

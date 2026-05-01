@@ -308,7 +308,8 @@ func _update_background_tint() -> void:
 		DayNightCycle.TimePeriod.DAWN:
 			tint_color = Color(1.0, 0.9, 0.85, 1.0)
 		DayNightCycle.TimePeriod.MORNING, DayNightCycle.TimePeriod.NOON, DayNightCycle.TimePeriod.AFTERNOON:
-			tint_color = Color(1.0, 1.0, 1.0, 1.0)
+			# 白天不再用纯白，降低亮度防止刺眼
+			tint_color = Color(0.92, 0.92, 0.9, 1.0)
 		DayNightCycle.TimePeriod.DUSK:
 			tint_color = Color(1.0, 0.85, 0.8, 1.0)
 		DayNightCycle.TimePeriod.NIGHT:

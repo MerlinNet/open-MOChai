@@ -50,7 +50,7 @@ signal dusk_started
 
 @export_group("夜间覆盖层")
 @export var night_overlay_enabled: bool = true  ## 是否启用夜间覆盖层
-@export var night_overlay_color: Color = Color(0.15, 0.15, 0.25, 1.0)  ## 夜间覆盖层颜色（提高亮度）
+@export var night_overlay_color: Color = Color(0.02, 0.02, 0.08, 1.0)  ## 夜间覆盖层颜色（近纯黑，氛围暗夜）
 @export var dusk_overlay_color: Color = Color(0.6, 0.5, 0.4, 1.0)  ## 黄昏覆盖层颜色
 @export var dawn_overlay_color: Color = Color(0.7, 0.6, 0.5, 1.0)  ## 黎明覆盖层颜色
 
@@ -338,9 +338,9 @@ func _update_ambient_light() -> void:
 
 	if _ambient_light is PointLight2D:
 		_ambient_light.color = target_color
-		# 夜间环境光需要足够的亮度
+		# 夜间环境光使用配置值，不再硬编码
 		if is_night():
-			_ambient_light.energy = 0.4
+			_ambient_light.energy = target_energy
 			_ambient_light.enabled = true
 		else:
 			_ambient_light.energy = target_energy * 0.3
@@ -364,7 +364,7 @@ func _update_night_overlay() -> void:
 
 	# 更新着色器参数
 	_night_shader.set_shader_parameter("current_time", time_progress)
-	_night_shader.set_shader_parameter("night_intensity", 0.6)
+	_night_shader.set_shader_parameter("night_intensity", 0.85)
 	_night_shader.set_shader_parameter("night_color", night_overlay_color)
 	_night_shader.set_shader_parameter("twilight_color", dusk_overlay_color)
 
@@ -385,14 +385,17 @@ func _update_registered_lights() -> void:
 
 		if light is PointLight2D:
 			# 白天关闭点光源，夜晚/黄昏/黎明开启
-			# 不修改能量值，使用场景中设置的值
 			if is_night_time:
 				light.enabled = true
 				light.shadow_enabled = street_light_shadow_enabled
-				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.2f" % [light.name, light.energy])
+				# 夜间街灯更聚焦：缩小光照范围、降低能量
+				light.texture_scale = max(light.texture_scale * 0.6, 3.0)
+				light.energy = street_light_energy * 0.7
+				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.2f, scale=%.1f" % [light.name, light.energy, light.texture_scale])
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
 				light.shadow_enabled = street_light_shadow_enabled
+				light.energy = street_light_dusk_energy
 			else:
 				# 白天关闭点光源
 				light.enabled = false

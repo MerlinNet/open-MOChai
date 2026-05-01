@@ -70,6 +70,9 @@ var current_minute: float = 0.0
 var current_period: TimePeriod = TimePeriod.MORNING
 var day_count: int = 1
 
+## 上一帧的时间进度（用于判断是否需要更新覆盖层）
+var _last_time_progress: float = -1.0
+
 ## 时间流逝速度倍率
 var time_speed_multiplier: float = 1.0
 
@@ -110,6 +113,9 @@ func _process(delta: float) -> void:
 	# 检查时间段变化
 	_check_period_change()
 
+	# 每帧更新覆盖层（current_time 连续变化，必须每帧同步）
+	_update_night_overlay()
+
 	# 发射时间变化信号
 	emit_signal("time_changed", current_hour, current_minute)
 
@@ -127,7 +133,9 @@ func set_time(hour: float, minute: float = 0.0) -> void:
 		emit_signal("period_changed", current_period, old_period)
 		_on_period_changed(current_period, old_period)
 	else:
-		# 即使时间段没变，也要更新灯光状态
+		# 即使时间段没变，也要更新所有视觉状态
+		_update_night_overlay()
+		_update_ambient_light()
 		_update_registered_lights()
 
 	emit_signal("time_changed", current_hour, current_minute)
@@ -372,34 +380,45 @@ func _update_night_overlay() -> void:
 	GameLogger.debug("DayNight", "夜间覆盖层: time=%.2f" % time_progress)
 
 
+## 灯光原始参数缓存（防止每帧反复修改导致参数漂移）
+var _light_original_params: Dictionary = {}
+
 ## 更新所有注册的灯光
 func _update_registered_lights() -> void:
 	var is_night_time: bool = is_night()
 	var is_dusk_time: bool = current_period == TimePeriod.DUSK
 	var is_dawn_time: bool = current_period == TimePeriod.DAWN
 
-	GameLogger.debug("DayNight", "更新灯光: 夜晚=%s, 灯光数=%d" % [is_night_time, _registered_lights.size()])
-
 	for light in _registered_lights:
 		if light == null:
 			continue
 
 		if light is PointLight2D:
+			# 缓存原始参数（首次注册时）
+			if not _light_original_params.has(light):
+				_light_original_params[light] = {
+					"energy": light.energy,
+					"texture_scale": light.texture_scale
+				}
+			var orig = _light_original_params[light]
+
 			# 白天关闭点光源，夜晚/黄昏/黎明开启
 			if is_night_time:
 				light.enabled = true
 				light.shadow_enabled = street_light_shadow_enabled
-				# 夜间街灯更聚焦：缩小光照范围、降低能量
-				light.texture_scale = max(light.texture_scale * 0.6, 3.0)
+				# 夜间街灯更聚焦：基于原始参数缩小和降低
+				light.texture_scale = max(orig.texture_scale * 0.6, 3.0)
 				light.energy = street_light_energy * 0.7
-				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.2f, scale=%.1f" % [light.name, light.energy, light.texture_scale])
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
 				light.shadow_enabled = street_light_shadow_enabled
 				light.energy = street_light_dusk_energy
+				light.texture_scale = orig.texture_scale
 			else:
 				# 白天关闭点光源
 				light.enabled = false
+				light.energy = orig.energy
+				light.texture_scale = orig.texture_scale
 		elif light is DirectionalLight2D:
 			# 太阳光：白天开启，夜晚关闭
 			if is_night_time:

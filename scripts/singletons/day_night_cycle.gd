@@ -373,7 +373,7 @@ func _update_night_overlay() -> void:
 	# 更新着色器参数
 	_night_shader.set_shader_parameter("current_time", time_progress)
 	_night_shader.set_shader_parameter("night_intensity", 0.85)
-	_night_shader.set_shader_parameter("day_intensity", 0.08)
+	_night_shader.set_shader_parameter("day_intensity", 0.15)
 	_night_shader.set_shader_parameter("night_color", night_overlay_color)
 	_night_shader.set_shader_parameter("twilight_color", dusk_overlay_color)
 
@@ -431,7 +431,7 @@ func _update_registered_lights() -> void:
 			else:
 				# 白天
 				light.enabled = true
-				light.energy = 0.3
+				light.energy = 0.15
 				light.shadow_enabled = true
 				_update_shadow_direction(light)
 

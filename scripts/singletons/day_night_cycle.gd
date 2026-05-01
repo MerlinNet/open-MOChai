@@ -43,9 +43,9 @@ signal dusk_started
 @export var night_sky_color: Color = Color(0.05, 0.05, 0.15, 1.0)
 
 @export_group("环境光强度")
-@export var dawn_energy: float = 0.5
-@export var day_energy: float = 0.55
-@export var dusk_energy: float = 0.4
+@export var dawn_energy: float = 0.4
+@export var day_energy: float = 0.35  ## 日间降低，防止画面过曝刺眼
+@export var dusk_energy: float = 0.35
 @export var night_energy: float = 0.08  ## 夜间能量大幅降低，营造真实夜晚
 
 @export_group("夜间覆盖层")
@@ -343,7 +343,7 @@ func _update_ambient_light() -> void:
 			_ambient_light.energy = target_energy
 			_ambient_light.enabled = true
 		else:
-			_ambient_light.energy = target_energy * 0.3
+			_ambient_light.energy = target_energy * 0.2
 			_ambient_light.enabled = true
 	elif _ambient_light is DirectionalLight2D:
 		_ambient_light.color = target_color
@@ -365,6 +365,7 @@ func _update_night_overlay() -> void:
 	# 更新着色器参数
 	_night_shader.set_shader_parameter("current_time", time_progress)
 	_night_shader.set_shader_parameter("night_intensity", 0.85)
+	_night_shader.set_shader_parameter("day_intensity", 0.08)
 	_night_shader.set_shader_parameter("night_color", night_overlay_color)
 	_night_shader.set_shader_parameter("twilight_color", dusk_overlay_color)
 
@@ -411,7 +412,7 @@ func _update_registered_lights() -> void:
 			else:
 				# 白天
 				light.enabled = true
-				light.energy = 0.5
+				light.energy = 0.3
 				light.shadow_enabled = true
 				_update_shadow_direction(light)
 

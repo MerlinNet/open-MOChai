@@ -266,7 +266,7 @@ func _register_scene_lights() -> void:
 
 ## 时间变化回调
 func _on_time_changed(hour: float, minute: float) -> void:
-	# 可以在这里添加时间相关的逻辑
+	# 时间相关逻辑可在此扩展
 	pass
 
 

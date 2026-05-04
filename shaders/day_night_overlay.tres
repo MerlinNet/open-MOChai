@@ -2,7 +2,7 @@
 
 [resource]
 code = "shader_type canvas_item;
-blend_mode multiply;
+render_mode blend_mul;
 
 uniform float current_time : hint_range(0, 1) = 0.0;
 uniform float night_intensity : hint_range(0, 1) = 0.85;

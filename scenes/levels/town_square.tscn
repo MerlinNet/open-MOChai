@@ -56,62 +56,62 @@ z_index = 1
 
 [node name="Buildings" type="Node2D" parent="Collisions"]
 
-[node name="LeftShop" type="StaticBody2D" parent="Buildings"]
+[node name="LeftShop" type="StaticBody2D" parent="Collisions/Buildings"]
 position = Vector2(200, 380)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/LeftShop"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Buildings/LeftShop"]
 shape = SubResource("RectangleShape2D_shop_left")
 
-[node name="RightInn" type="StaticBody2D" parent="Buildings"]
+[node name="RightInn" type="StaticBody2D" parent="Collisions/Buildings"]
 position = Vector2(1280, 350)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/RightInn"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Buildings/RightInn"]
 shape = SubResource("RectangleShape2D_inn_right")
 
-[node name="Castle" type="StaticBody2D" parent="Buildings"]
+[node name="Castle" type="StaticBody2D" parent="Collisions/Buildings"]
 position = Vector2(800, 180)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Buildings/Castle"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Buildings/Castle"]
 shape = SubResource("RectangleShape2D_castle")
 
 [node name="Decorations" type="Node2D" parent="Collisions"]
 
-[node name="Fountain" type="StaticBody2D" parent="Decorations"]
+[node name="Fountain" type="StaticBody2D" parent="Collisions/Decorations"]
 position = Vector2(720, 560)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/Fountain"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Decorations/Fountain"]
 shape = SubResource("CircleShape2D_fountain")
 
-[node name="TeleportTree" type="StaticBody2D" parent="Decorations"]
+[node name="TeleportTree" type="StaticBody2D" parent="Collisions/Decorations"]
 position = Vector2(1050, 700)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/TeleportTree"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Decorations/TeleportTree"]
 shape = SubResource("RectangleShape2D_tree")
 
-[node name="Waterfall" type="StaticBody2D" parent="Decorations"]
+[node name="Waterfall" type="StaticBody2D" parent="Collisions/Decorations"]
 position = Vector2(100, 680)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/Waterfall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Decorations/Waterfall"]
 shape = SubResource("RectangleShape2D_waterfall")
 
-[node name="Bridge" type="StaticBody2D" parent="Decorations"]
+[node name="Bridge" type="StaticBody2D" parent="Collisions/Decorations"]
 position = Vector2(720, 960)
 collision_layer = 4
 collision_mask = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Decorations/Bridge"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collisions/Decorations/Bridge"]
 shape = SubResource("RectangleShape2D_bridge")
 
 [node name="Boundaries" type="Node2D" parent="Collisions"]
@@ -155,16 +155,16 @@ z_index = 2
 position = Vector2(720, 660)
 gizmo_extents = 20.0
 
-[node name="SpawnIndicator" type="Node2D" parent="PlayerSpawn"]
+[node name="SpawnIndicator" type="Node2D" parent="Markers/PlayerSpawn"]
 
-[node name="IndicatorBase" type="ColorRect" parent="PlayerSpawn/SpawnIndicator"]
+[node name="IndicatorBase" type="ColorRect" parent="Markers/PlayerSpawn/SpawnIndicator"]
 offset_left = -15.0
 offset_top = -2.0
 offset_right = 15.0
 offset_bottom = 2.0
 color = Color(0.2, 0.9, 0.2, 0.9)
 
-[node name="IndicatorArrow" type="ColorRect" parent="PlayerSpawn/SpawnIndicator"]
+[node name="IndicatorArrow" type="ColorRect" parent="Markers/PlayerSpawn/SpawnIndicator"]
 offset_left = -5.0
 offset_top = -20.0
 offset_right = 5.0
@@ -173,29 +173,29 @@ color = Color(0.2, 0.9, 0.2, 0.9)
 
 [node name="NPCPoints" type="Node2D" parent="Markers"]
 
-[node name="NPC_Shopkeeper" type="Marker2D" parent="NPCPoints"]
+[node name="NPC_Shopkeeper" type="Marker2D" parent="Markers/NPCPoints"]
 position = Vector2(340, 480)
 gizmo_extents = 15.0
 
-[node name="NPC_Innkeeper" type="Marker2D" parent="NPCPoints"]
+[node name="NPC_Innkeeper" type="Marker2D" parent="Markers/NPCPoints"]
 position = Vector2(1180, 460)
 gizmo_extents = 15.0
 
-[node name="NPC_CastleGuard" type="Marker2D" parent="NPCPoints"]
+[node name="NPC_CastleGuard" type="Marker2D" parent="Markers/NPCPoints"]
 position = Vector2(800, 320)
 gizmo_extents = 15.0
 
-[node name="NPC_FountainGuide" type="Marker2D" parent="NPCPoints"]
+[node name="NPC_FountainGuide" type="Marker2D" parent="Markers/NPCPoints"]
 position = Vector2(720, 660)
 gizmo_extents = 15.0
 
 [node name="Portals" type="Node2D" parent="Markers"]
 
-[node name="Portal_Tree" type="Marker2D" parent="Portals"]
+[node name="Portal_Tree" type="Marker2D" parent="Markers/Portals"]
 position = Vector2(1050, 700)
 gizmo_extents = 20.0
 
-[node name="Portal_Dungeon" type="Marker2D" parent="Portals"]
+[node name="Portal_Dungeon" type="Marker2D" parent="Markers/Portals"]
 position = Vector2(800, 280)
 gizmo_extents = 20.0
 

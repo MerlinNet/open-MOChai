@@ -16,6 +16,7 @@ const MAX_HEALTH: int = 100
 @export var speed: float = 200.0
 @export_range(0.1, 1.0) var acceleration: float = 0.15
 @export_range(0.1, 1.0) var friction: float = 0.2
+@export_enum("默认冒险者", "幽灵", "萌妹") var character_skin: String = "默认冒险者"
 
 # 公共变量
 var health: int = MAX_HEALTH
@@ -39,6 +40,7 @@ var touch_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_initialize()
+	_apply_character_skin(character_skin)
 	# 俯视角模式：无重力，自由四方向移动
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	# 碰撞层和掩码 (层1=玩家, 层2=敌人, 层3=环境, 层4=收集品)
@@ -53,6 +55,58 @@ func _ready() -> void:
 		if DayNightCycle.is_night():
 			_enable_glow(true)
 
+
+
+
+func _apply_character_skin(skin_name: String) -> void:
+	if not anim_sprite:
+		return
+
+	var sprite_frames := SpriteFrames.new()
+	for n in ["down", "left", "right", "up"]:
+		sprite_frames.add_animation(n)
+
+	match skin_name:
+		"幽灵":
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/1ghost.png", "res://assets/sprites/player/11ghost.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/2ghost.png", "res://assets/sprites/player/22ghost.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/3ghost.png", "res://assets/sprites/player/33ghost.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/4ghost.png", "res://assets/sprites/player/44ghost.png")
+		"萌妹":
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/1moe_girl.png", "res://assets/sprites/player/11moe_girl.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/2moe_girl.png", "res://assets/sprites/player/22moe_girl.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/3moe_girl.png", "res://assets/sprites/player/33moe_girl.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/4moe_girl.png", "res://assets/sprites/player/44moe_girl.png")
+		_:
+			_add_walk_direction(sprite_frames, "down", "res://assets/sprites/player/1_walk_")
+			_add_walk_direction(sprite_frames, "left", "res://assets/sprites/player/2_walk_")
+			_add_walk_direction(sprite_frames, "right", "res://assets/sprites/player/3_walk_")
+			_add_walk_direction(sprite_frames, "up", "res://assets/sprites/player/4_walk_")
+
+	anim_sprite.sprite_frames = sprite_frames
+	anim_sprite.animation = "down"
+	anim_sprite.frame = 0
+
+
+func _add_walk_direction(frames: SpriteFrames, animation_name: String, path_prefix: String) -> void:
+	for i in range(4):
+		var tex := load("%s%d.png" % [path_prefix, i]) as Texture2D
+		if tex:
+			frames.add_frame(animation_name, tex)
+
+
+func _add_two_frame_direction(frames: SpriteFrames, animation_name: String, path_a: String, path_b: String) -> void:
+	var tex_a := load(path_a) as Texture2D
+	var tex_b := load(path_b) as Texture2D
+	if tex_a:
+		frames.add_frame(animation_name, tex_a)
+	if tex_b:
+		frames.add_frame(animation_name, tex_b)
+
+
+func set_character_skin(skin_name: String) -> void:
+	character_skin = skin_name
+	_apply_character_skin(character_skin)
 
 func _on_period_changed(new_period: int, _old_period: int) -> void:
 	if new_period == DayNightCycle.TimePeriod.NIGHT or new_period == DayNightCycle.TimePeriod.DUSK:

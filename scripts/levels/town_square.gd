@@ -19,6 +19,10 @@ signal player_spawned(spawn_position: Vector2)
 @onready var player: Node2D = $Player
 @onready var touch_controls: CanvasLayer = $TouchControls
 
+var selected_character_skin: String = "默认冒险者"
+var _character_select_layer: CanvasLayer
+var _character_option_button: OptionButton
+
 # NPC 位置字典 (供外部查询)
 var npc_positions: Dictionary = {}
 # 传送点位置字典
@@ -41,9 +45,59 @@ func _ready() -> void:
 	_print_scene_info()
 	_setup_player()
 	_connect_touch_controls()
+	_show_character_select_ui()
 	GameLogger.info("TownSquare", "城镇广场已加载")
 	GameLogger.debug("TownSquare", "玩家出生点: %s" % get_spawn_position())
 
+
+
+
+func _show_character_select_ui() -> void:
+	if _character_select_layer:
+		return
+
+	_character_select_layer = CanvasLayer.new()
+	_character_select_layer.layer = 100
+	add_child(_character_select_layer)
+
+	var panel := PanelContainer.new()
+	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	panel.position = Vector2(-180, 40)
+	panel.size = Vector2(360, 160)
+	_character_select_layer.add_child(panel)
+
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 12)
+	panel.add_child(vb)
+
+	var title := Label.new()
+	title.text = "选择角色"
+	vb.add_child(title)
+
+	_character_option_button = OptionButton.new()
+	_character_option_button.add_item("默认冒险者")
+	_character_option_button.add_item("幽灵")
+	_character_option_button.add_item("萌妹")
+	vb.add_child(_character_option_button)
+
+	var confirm_button := Button.new()
+	confirm_button.text = "进入游戏"
+	confirm_button.pressed.connect(_on_character_confirm_pressed)
+	vb.add_child(confirm_button)
+
+
+func _on_character_confirm_pressed() -> void:
+	if _character_option_button:
+		selected_character_skin = _character_option_button.get_item_text(_character_option_button.selected)
+
+	if player and player.has_method("set_character_skin"):
+		player.set_character_skin(selected_character_skin)
+
+	if _character_select_layer:
+		_character_select_layer.queue_free()
+		_character_select_layer = null
+
+	GameLogger.info("TownSquare", "已选择角色: %s" % selected_character_skin)
 
 ## 连接触摸控件信号
 func _connect_touch_controls() -> void:

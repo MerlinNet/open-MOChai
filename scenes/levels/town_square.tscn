@@ -153,21 +153,8 @@ z_index = 2
 position = Vector2(720, 660)
 gizmo_extents = 20.0
 
-[node name="SpawnIndicator" type="Node2D" parent="Markers/PlayerSpawn"]
 
-[node name="IndicatorBase" type="ColorRect" parent="Markers/PlayerSpawn/SpawnIndicator"]
-offset_left = -15.0
-offset_top = -2.0
-offset_right = 15.0
-offset_bottom = 2.0
-color = Color(0.2, 0.9, 0.2, 0.9)
 
-[node name="IndicatorArrow" type="ColorRect" parent="Markers/PlayerSpawn/SpawnIndicator"]
-offset_left = -5.0
-offset_top = -20.0
-offset_right = 5.0
-offset_bottom = 0.0
-color = Color(0.2, 0.9, 0.2, 0.9)
 
 [node name="NPCPoints" type="Node2D" parent="Markers"]
 

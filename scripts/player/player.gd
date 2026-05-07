@@ -107,7 +107,7 @@ func _enable_glow(enabled: bool) -> void:
 		player_glow.enabled = enabled
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if current_state == State.DEAD:
 		return
 

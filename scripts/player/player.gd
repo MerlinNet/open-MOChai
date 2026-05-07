@@ -11,13 +11,13 @@ signal died
 
 # 常量
 const MAX_HEALTH: int = 100
-const CHARACTER_SKIN_NAMES := ["默认冒险者", "幽灵", "萌妹"]
+const CHARACTER_SKIN_NAMES := ["默认冒险者", "幽灵", "萌妹", "粉发"]
 
 # 导出属性
 @export var speed: float = 200.0
 @export_range(0.1, 1.0) var acceleration: float = 0.15
 @export_range(0.1, 1.0) var friction: float = 0.2
-@export_enum("默认冒险者", "幽灵", "萌妹") var character_skin_index: int = 0
+@export_enum("默认冒险者", "幽灵", "萌妹", "粉发") var character_skin_index: int = 0
 
 # 公共变量
 var health: int = MAX_HEALTH
@@ -72,6 +72,11 @@ func _apply_character_skin(skin_name: String) -> void:
 			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/2moe_girl.png", "res://assets/sprites/player/22moe_girl.png")
 			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/3moe_girl.png", "res://assets/sprites/player/33moe_girl.png")
 			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/4moe_girl.png", "res://assets/sprites/player/44moe_girl.png")
+		"粉发":
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/pink_down_0.png", "res://assets/sprites/player/pink_down_1.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/pink_left_0.png", "res://assets/sprites/player/pink_left_1.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/pink_right_0.png", "res://assets/sprites/player/pink_right_1.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/pink_up_0.png", "res://assets/sprites/player/pink_up_1.png")
 		_:
 			_add_walk_direction(sprite_frames, "down", "res://assets/sprites/player/1_walk_")
 			_add_walk_direction(sprite_frames, "left", "res://assets/sprites/player/2_walk_")

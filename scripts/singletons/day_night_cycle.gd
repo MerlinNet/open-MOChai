@@ -43,14 +43,14 @@ signal dusk_started
 @export var night_sky_color: Color = Color(0.05, 0.05, 0.15, 1.0)
 
 @export_group("环境光强度")
-@export var dawn_energy: float = 0.5
-@export var day_energy: float = 0.55
-@export var dusk_energy: float = 0.4
+@export var dawn_energy: float = 0.4
+@export var day_energy: float = 0.35  ## 日间降低，防止画面过曝刺眼
+@export var dusk_energy: float = 0.35
 @export var night_energy: float = 0.08  ## 夜间能量大幅降低，营造真实夜晚
 
 @export_group("夜间覆盖层")
 @export var night_overlay_enabled: bool = true  ## 是否启用夜间覆盖层
-@export var night_overlay_color: Color = Color(0.15, 0.15, 0.25, 1.0)  ## 夜间覆盖层颜色（提高亮度）
+@export var night_overlay_color: Color = Color(0.02, 0.02, 0.08, 1.0)  ## 夜间覆盖层颜色（近纯黑，氛围暗夜）
 @export var dusk_overlay_color: Color = Color(0.6, 0.5, 0.4, 1.0)  ## 黄昏覆盖层颜色
 @export var dawn_overlay_color: Color = Color(0.7, 0.6, 0.5, 1.0)  ## 黎明覆盖层颜色
 
@@ -69,6 +69,9 @@ var current_hour: float = 8.0
 var current_minute: float = 0.0
 var current_period: TimePeriod = TimePeriod.MORNING
 var day_count: int = 1
+
+## 上一帧的时间进度（用于判断是否需要更新覆盖层）
+var _last_time_progress: float = -1.0
 
 ## 时间流逝速度倍率
 var time_speed_multiplier: float = 1.0
@@ -110,6 +113,9 @@ func _process(delta: float) -> void:
 	# 检查时间段变化
 	_check_period_change()
 
+	# 每帧更新覆盖层（current_time 连续变化，必须每帧同步）
+	_update_night_overlay()
+
 	# 发射时间变化信号
 	emit_signal("time_changed", current_hour, current_minute)
 
@@ -127,7 +133,9 @@ func set_time(hour: float, minute: float = 0.0) -> void:
 		emit_signal("period_changed", current_period, old_period)
 		_on_period_changed(current_period, old_period)
 	else:
-		# 即使时间段没变，也要更新灯光状态
+		# 即使时间段没变，也要更新所有视觉状态
+		_update_night_overlay()
+		_update_ambient_light()
 		_update_registered_lights()
 
 	emit_signal("time_changed", current_hour, current_minute)
@@ -338,12 +346,12 @@ func _update_ambient_light() -> void:
 
 	if _ambient_light is PointLight2D:
 		_ambient_light.color = target_color
-		# 夜间环境光需要足够的亮度
+		# 夜间环境光使用配置值，不再硬编码
 		if is_night():
-			_ambient_light.energy = 0.4
+			_ambient_light.energy = target_energy
 			_ambient_light.enabled = true
 		else:
-			_ambient_light.energy = target_energy * 0.3
+			_ambient_light.energy = target_energy * 0.2
 			_ambient_light.enabled = true
 	elif _ambient_light is DirectionalLight2D:
 		_ambient_light.color = target_color
@@ -364,12 +372,16 @@ func _update_night_overlay() -> void:
 
 	# 更新着色器参数
 	_night_shader.set_shader_parameter("current_time", time_progress)
-	_night_shader.set_shader_parameter("night_intensity", 0.6)
+	_night_shader.set_shader_parameter("night_intensity", 0.85)
+	_night_shader.set_shader_parameter("day_intensity", 0.15)
 	_night_shader.set_shader_parameter("night_color", night_overlay_color)
 	_night_shader.set_shader_parameter("twilight_color", dusk_overlay_color)
 
 	GameLogger.debug("DayNight", "夜间覆盖层: time=%.2f" % time_progress)
 
+
+## 灯光原始参数缓存（防止每帧反复修改导致参数漂移）
+var _light_original_params: Dictionary = {}
 
 ## 更新所有注册的灯光
 func _update_registered_lights() -> void:
@@ -377,25 +389,36 @@ func _update_registered_lights() -> void:
 	var is_dusk_time: bool = current_period == TimePeriod.DUSK
 	var is_dawn_time: bool = current_period == TimePeriod.DAWN
 
-	GameLogger.debug("DayNight", "更新灯光: 夜晚=%s, 灯光数=%d" % [is_night_time, _registered_lights.size()])
-
 	for light in _registered_lights:
 		if light == null:
 			continue
 
 		if light is PointLight2D:
+			# 缓存原始参数（首次注册时）
+			if not _light_original_params.has(light):
+				_light_original_params[light] = {
+					"energy": light.energy,
+					"texture_scale": light.texture_scale
+				}
+			var orig = _light_original_params[light]
+
 			# 白天关闭点光源，夜晚/黄昏/黎明开启
-			# 不修改能量值，使用场景中设置的值
 			if is_night_time:
 				light.enabled = true
 				light.shadow_enabled = street_light_shadow_enabled
-				GameLogger.debug("DayNight", "街灯 %s: enabled=true, energy=%.2f" % [light.name, light.energy])
+				# 夜间街灯更聚焦：基于原始参数缩小和降低
+				light.texture_scale = max(orig.texture_scale * 0.6, 3.0)
+				light.energy = street_light_energy * 0.7
 			elif is_dusk_time or is_dawn_time:
 				light.enabled = true
 				light.shadow_enabled = street_light_shadow_enabled
+				light.energy = street_light_dusk_energy
+				light.texture_scale = orig.texture_scale
 			else:
 				# 白天关闭点光源
 				light.enabled = false
+				light.energy = orig.energy
+				light.texture_scale = orig.texture_scale
 		elif light is DirectionalLight2D:
 			# 太阳光：白天开启，夜晚关闭
 			if is_night_time:
@@ -408,7 +431,7 @@ func _update_registered_lights() -> void:
 			else:
 				# 白天
 				light.enabled = true
-				light.energy = 0.5
+				light.energy = 0.15
 				light.shadow_enabled = true
 				_update_shadow_direction(light)
 

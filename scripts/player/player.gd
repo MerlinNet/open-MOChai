@@ -34,6 +34,7 @@ var touch_direction: Vector2 = Vector2.ZERO
 # @onready 变量
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var player_glow: PointLight2D = $PlayerGlow
 
 
 func _ready() -> void:
@@ -45,6 +46,24 @@ func _ready() -> void:
 	collision_mask = 15  # 检测层 1+2+3+4 (全部层，确保碰撞万无一失)
 	# 增大安全边距，防止高速移动时穿透薄墙
 	safe_margin = 2.0
+	# 连接昼夜系统信号，夜间自动启用自发光
+	if DayNightCycle:
+		DayNightCycle.period_changed.connect(_on_period_changed)
+		# 初始检查
+		if DayNightCycle.is_night():
+			_enable_glow(true)
+
+
+func _on_period_changed(new_period: int, _old_period: int) -> void:
+	if new_period == DayNightCycle.TimePeriod.NIGHT or new_period == DayNightCycle.TimePeriod.DUSK:
+		_enable_glow(true)
+	else:
+		_enable_glow(false)
+
+
+func _enable_glow(enabled: bool) -> void:
+	if player_glow:
+		player_glow.enabled = enabled
 
 
 func _physics_process(delta: float) -> void:

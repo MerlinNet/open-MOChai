@@ -11,11 +11,13 @@ signal died
 
 # 常量
 const MAX_HEALTH: int = 100
+const CHARACTER_SKIN_NAMES := ["晨星", "樱歌", "澜音"]
 
 # 导出属性
 @export var speed: float = 200.0
 @export_range(0.1, 1.0) var acceleration: float = 0.15
 @export_range(0.1, 1.0) var friction: float = 0.2
+@export_enum("晨星", "樱歌", "澜音") var character_skin_index: int = 0
 
 # 公共变量
 var health: int = MAX_HEALTH
@@ -39,6 +41,7 @@ var touch_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_initialize()
+	_apply_character_skin(CHARACTER_SKIN_NAMES[clamp(character_skin_index, 0, CHARACTER_SKIN_NAMES.size() - 1)])
 	# 俯视角模式：无重力，自由四方向移动
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	# 碰撞层和掩码 (层1=玩家, 层2=敌人, 层3=环境, 层4=收集品)
@@ -46,27 +49,73 @@ func _ready() -> void:
 	collision_mask = 15  # 检测层 1+2+3+4 (全部层，确保碰撞万无一失)
 	# 增大安全边距，防止高速移动时穿透薄墙
 	safe_margin = 2.0
-	# 连接昼夜系统信号，夜间自动启用自发光
-	if DayNightCycle:
-		DayNightCycle.period_changed.connect(_on_period_changed)
-		# 初始检查
-		if DayNightCycle.is_night():
-			_enable_glow(true)
 
 
-func _on_period_changed(new_period: int, _old_period: int) -> void:
-	if new_period == DayNightCycle.TimePeriod.NIGHT or new_period == DayNightCycle.TimePeriod.DUSK:
-		_enable_glow(true)
-	else:
-		_enable_glow(false)
 
+
+func _apply_character_skin(skin_name: String) -> void:
+	if not anim_sprite:
+		return
+
+	var sprite_frames := SpriteFrames.new()
+	for n in ["down", "left", "right", "up"]:
+		sprite_frames.add_animation(n)
+
+	match skin_name:
+		"晨星":
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/hero_orange_down_0.png", "res://assets/sprites/player/hero_orange_down_1.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/hero_orange_left_0.png", "res://assets/sprites/player/hero_orange_left_1.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/hero_orange_right_0.png", "res://assets/sprites/player/hero_orange_right_1.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/hero_orange_up_0.png", "res://assets/sprites/player/hero_orange_up_1.png")
+		"樱歌":
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/hero_pink_down_0.png", "res://assets/sprites/player/hero_pink_down_1.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/hero_pink_left_0.png", "res://assets/sprites/player/hero_pink_left_1.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/hero_pink_right_0.png", "res://assets/sprites/player/hero_pink_right_1.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/hero_pink_up_0.png", "res://assets/sprites/player/hero_pink_up_1.png")
+		"澜音":
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/hero_blue_down_0.png", "res://assets/sprites/player/hero_blue_down_1.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/hero_blue_left_0.png", "res://assets/sprites/player/hero_blue_left_1.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/hero_blue_right_0.png", "res://assets/sprites/player/hero_blue_right_1.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/hero_blue_up_0.png", "res://assets/sprites/player/hero_blue_up_1.png")
+		_:
+			_add_two_frame_direction(sprite_frames, "down", "res://assets/sprites/player/hero_orange_down_0.png", "res://assets/sprites/player/hero_orange_down_1.png")
+			_add_two_frame_direction(sprite_frames, "left", "res://assets/sprites/player/hero_orange_left_0.png", "res://assets/sprites/player/hero_orange_left_1.png")
+			_add_two_frame_direction(sprite_frames, "right", "res://assets/sprites/player/hero_orange_right_0.png", "res://assets/sprites/player/hero_orange_right_1.png")
+			_add_two_frame_direction(sprite_frames, "up", "res://assets/sprites/player/hero_orange_up_0.png", "res://assets/sprites/player/hero_orange_up_1.png")
+	anim_sprite.sprite_frames = sprite_frames
+	anim_sprite.animation = "down"
+	anim_sprite.frame = 0
+
+
+func _add_walk_direction(frames: SpriteFrames, animation_name: String, path_prefix: String) -> void:
+	for i in range(4):
+		var tex := load("%s%d.png" % [path_prefix, i]) as Texture2D
+		if tex:
+			frames.add_frame(animation_name, tex)
+
+
+func _add_two_frame_direction(frames: SpriteFrames, animation_name: String, path_a: String, path_b: String) -> void:
+	var tex_a := load(path_a) as Texture2D
+	var tex_b := load(path_b) as Texture2D
+	if tex_a:
+		frames.add_frame(animation_name, tex_a)
+	if tex_b:
+		frames.add_frame(animation_name, tex_b)
+
+
+func set_character_skin(skin_name: String) -> void:
+	var idx := CHARACTER_SKIN_NAMES.find(skin_name)
+	if idx == -1:
+		idx = 0
+	character_skin_index = idx
+	_apply_character_skin(CHARACTER_SKIN_NAMES[character_skin_index])
 
 func _enable_glow(enabled: bool) -> void:
 	if player_glow:
 		player_glow.enabled = enabled
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if current_state == State.DEAD:
 		return
 

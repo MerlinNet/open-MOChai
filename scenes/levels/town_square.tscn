@@ -1,9 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://ctownsquare0001"]
+[gd_scene load_steps=19 format=3 uid="uid://ctownsquare0001"]
 
 [ext_resource type="Script" path="res://scripts/levels/town_square.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/maps/town_square.jpg" id="2_bg"]
 [ext_resource type="PackedScene" uid="uid://c8player0001" path="res://scenes/player/player.tscn" id="3_player"]
 [ext_resource type="PackedScene" uid="uid://c8touchctrl0001" path="res://scenes/ui/touch_controls.tscn" id="4_touch"]
+[ext_resource type="Texture2D" path="res://Src/player/2026-05-03T12-03-14-076Z-6fe66060.png" id="5_npc_a"]
+[ext_resource type="Texture2D" path="res://Src/player/2026-05-03T12-10-01-134Z-db560b2c.png" id="6_npc_b"]
+[ext_resource type="Texture2D" path="res://Src/player/2026-05-03T12-18-09-918Z-8ec650e7.png" id="7_npc_c"]
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_shop_left"]
 size = Vector2(240, 200)
 
@@ -150,21 +153,8 @@ z_index = 2
 position = Vector2(720, 660)
 gizmo_extents = 20.0
 
-[node name="SpawnIndicator" type="Node2D" parent="Markers/PlayerSpawn"]
 
-[node name="IndicatorBase" type="ColorRect" parent="Markers/PlayerSpawn/SpawnIndicator"]
-offset_left = -15.0
-offset_top = -2.0
-offset_right = 15.0
-offset_bottom = 2.0
-color = Color(0.2, 0.9, 0.2, 0.9)
 
-[node name="IndicatorArrow" type="ColorRect" parent="Markers/PlayerSpawn/SpawnIndicator"]
-offset_left = -5.0
-offset_top = -20.0
-offset_right = 5.0
-offset_bottom = 0.0
-color = Color(0.2, 0.9, 0.2, 0.9)
 
 [node name="NPCPoints" type="Node2D" parent="Markers"]
 
@@ -268,7 +258,6 @@ offset_bottom = 1080.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
-material = SubResource("ShaderMaterial_night")
 
 [node name="SunLight" type="DirectionalLight2D" parent="."]
 position = Vector2(800, 0)
@@ -281,5 +270,24 @@ shadow_opacity = 0.6
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(720, 660)
 groups = ["player"]
+
+
+[node name="StaticNPC_A" type="Sprite2D" parent="."]
+position = Vector2(500, 540)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_npc_a")
+z_index = -1
+
+[node name="StaticNPC_B" type="Sprite2D" parent="."]
+position = Vector2(980, 520)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("6_npc_b")
+z_index = -1
+
+[node name="StaticNPC_C" type="Sprite2D" parent="."]
+position = Vector2(760, 760)
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("7_npc_c")
+z_index = -1
 
 [node name="TouchControls" parent="." instance=ExtResource("4_touch")]

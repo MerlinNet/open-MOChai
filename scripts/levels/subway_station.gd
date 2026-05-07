@@ -31,8 +31,3 @@ func _build_station() -> void:
 			var tile_type = MAP_DATA[row][col]
 			if tile_type > 0:
 				set_cell(Vector2i(col, row), 0, Vector2i(tile_type - 1, 0))
-
-
-func _get_tile_texture(tile_index: int) -> Texture2D:
-	# 返回对应tile的纹理
-	return null

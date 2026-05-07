@@ -12,40 +12,67 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.3
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Setup Godot
+
+      - name: Prepare Godot cache
         run: |
-          mkdir -v -p ~/.local/share/godot/export_templates
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-      
+          set -euo pipefail
+          mkdir -p ~/.local/share/godot/export_templates
+          if [ -d "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ]; then
+            mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ~/.local/share/godot/export_templates/
+          fi
+
+      - name: Import project
+        run: |
+          set -euo pipefail
+          godot --headless --import --quit-after 30
+
       - name: Validate project
         run: |
-          godot --headless --check-only --quit-after 10 2>&1 | tee validation.log || true
-          if grep -q "ERROR\|SCRIPT ERROR" validation.log; then
-            echo "❌ 项目验证失败"
+          set -euo pipefail
+          if ! godot --headless --check-only --quit-after 10 2>&1 | tee validation.log; then
+            echo "❌ Godot check-only 命令失败"
             exit 1
           fi
+
+          if grep -Eiq "ERROR|SCRIPT ERROR|Parse Error|Failed to load" validation.log; then
+            echo "❌ 项目验证发现错误日志"
+            exit 1
+          fi
+
           echo "✅ 项目验证通过"
-      
+
       - name: Check GDScript syntax
         run: |
-          find . -name "*.gd" -type f | while read file; do
+          set -euo pipefail
+          failed=0
+
+          while IFS= read -r -d '' file; do
             echo "检查: $file"
-            godot --headless --check-only --script "$file" --quit-after 5 2>&1 | grep -v "Failed to load resource" || true
-          done
-      
-      - name: Upload validation log
+            if ! godot --headless --check-only --script "$file" --quit-after 5 2>&1 | tee -a gdscript-check.log; then
+              failed=1
+            fi
+          done < <(find . -name "*.gd" -type f -print0)
+
+          exit "$failed"
+
+      - name: Upload validation logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: validation-log
-          path: validation.log
+          name: validation-logs
+          path: |
+            validation.log
+            gdscript-check.log
+          if-no-files-found: ignore

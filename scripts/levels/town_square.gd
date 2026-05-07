@@ -18,10 +18,6 @@ signal player_spawned(spawn_position: Vector2)
 @onready var background: Sprite2D = $Background
 @onready var player: Node2D = $Player
 @onready var touch_controls: CanvasLayer = $TouchControls
-@onready var lights_node: Node2D = $Lights
-@onready var sun_light: DirectionalLight2D = $SunLight
-@onready var ambient_light: PointLight2D = $Lights/AmbientLight
-@onready var night_overlay: Control = $NightOverlay
 
 # NPC 位置字典 (供外部查询)
 var npc_positions: Dictionary = {}
@@ -30,14 +26,6 @@ var portal_positions: Dictionary = {}
 
 # 场景配置
 @export var scene_name: String = "TownSquare"
-@export var ambient_light_color: Color = Color(0.8, 0.75, 0.9, 0.3)
-
-# 昼夜系统配置
-@export_group("昼夜系统")
-@export var enable_day_night_cycle: bool = true  ## 是否启用昼夜循环
-@export var start_hour: float = 21.0  ## 初始时间（小时）- 默认晚上9点
-@export var time_speed: float = 1.0  ## 时间流逝速度倍率
-
 
 func _ready() -> void:
 	_cache_npc_positions()
@@ -45,7 +33,6 @@ func _ready() -> void:
 	_print_scene_info()
 	_setup_player()
 	_connect_touch_controls()
-	_setup_day_night_cycle()
 	GameLogger.info("TownSquare", "城镇广场已加载")
 	GameLogger.debug("TownSquare", "玩家出生点: %s" % get_spawn_position())
 
@@ -214,125 +201,3 @@ func _check_body(body: Node, count: int) -> int:
 		if body.collision_layer == 0:
 			push_warning("[TownSquare] 碰撞体 %s 的 collision_layer 为 0!" % body.name)
 	return count
-
-
-# ==================== 昼夜系统集成 ====================
-
-## 初始化昼夜系统
-func _setup_day_night_cycle() -> void:
-	if not enable_day_night_cycle:
-		GameLogger.info("TownSquare", "昼夜循环已禁用")
-		return
-
-	# 注册夜间覆盖层
-	if night_overlay:
-		DayNightCycle.set_night_overlay(night_overlay)
-
-	# 先注册所有灯光
-	if ambient_light:
-		DayNightCycle.set_ambient_light(ambient_light)
-
-	if sun_light:
-		DayNightCycle.register_light(sun_light)
-
-	if lights_node:
-		_register_scene_lights()
-
-	# 再设置初始时间（会触发灯光更新）
-	DayNightCycle.set_time(start_hour)
-	DayNightCycle.set_time_speed(time_speed)
-
-	# 连接昼夜信号
-	DayNightCycle.time_changed.connect(_on_time_changed)
-	DayNightCycle.period_changed.connect(_on_period_changed)
-	DayNightCycle.dawn_started.connect(_on_dawn_started)
-	DayNightCycle.dusk_started.connect(_on_dusk_started)
-	DayNightCycle.night_started.connect(_on_night_started)
-
-	GameLogger.info("TownSquare", "昼夜系统已初始化，初始时间: %s" % DayNightCycle.get_time_string())
-
-
-## 注册场景中的所有灯光
-func _register_scene_lights() -> void:
-	if not lights_node:
-		return
-	
-	for child in lights_node.get_children():
-		if child is PointLight2D and child.name != "AmbientLight":
-			DayNightCycle.register_light(child)
-	
-	GameLogger.info("TownSquare", "已注册场景灯光到昼夜系统")
-
-
-## 时间变化回调
-func _on_time_changed(hour: float, minute: float) -> void:
-	# 可以在这里添加时间相关的逻辑
-	pass
-
-
-## 时间段变化回调
-func _on_period_changed(new_period: DayNightCycle.TimePeriod, old_period: DayNightCycle.TimePeriod) -> void:
-	var period_name: String = DayNightCycle.get_period_name()
-	GameLogger.info("TownSquare", "时间段变化: %s" % period_name)
-	
-	# 更新背景色调（可选）
-	_update_background_tint()
-
-
-## 黎明开始回调
-func _on_dawn_started() -> void:
-	GameLogger.info("TownSquare", "黎明降临，城镇苏醒...")
-	# 可以触发 NPC 开始活动等
-
-
-## 黄昏开始回调
-func _on_dusk_started() -> void:
-	GameLogger.info("TownSquare", "黄昏时分，街灯点亮...")
-	# 可以触发街灯亮起等
-
-
-## 夜晚开始回调
-func _on_night_started() -> void:
-	GameLogger.info("TownSquare", "夜幕降临，城镇入眠...")
-	# 可以触发 NPC 回家等
-
-
-## 更新背景色调
-func _update_background_tint() -> void:
-	if not background:
-		return
-
-	# 根据时间段调整背景颜色
-	var tint_color: Color
-	match DayNightCycle.current_period:
-		DayNightCycle.TimePeriod.DAWN:
-			tint_color = Color(1.0, 0.9, 0.85, 1.0)
-		DayNightCycle.TimePeriod.MORNING, DayNightCycle.TimePeriod.NOON, DayNightCycle.TimePeriod.AFTERNOON:
-			tint_color = Color(1.0, 1.0, 1.0, 1.0)
-		DayNightCycle.TimePeriod.DUSK:
-			tint_color = Color(1.0, 0.85, 0.8, 1.0)
-		DayNightCycle.TimePeriod.NIGHT:
-			# 夜间背景变暗，但由夜间覆盖层处理主要暗化效果
-			tint_color = Color(0.6, 0.65, 0.8, 1.0)
-
-	background.modulate = tint_color
-
-
-## 设置时间（供外部调用）
-func set_time_of_day(hour: float, minute: float = 0.0) -> void:
-	DayNightCycle.set_time(hour, minute)
-
-
-## 设置时间流逝速度
-func set_time_speed(speed: float) -> void:
-	DayNightCycle.set_time_speed(speed)
-
-
-## 获取当前时间字符串
-func get_current_time_string() -> String:
-	return DayNightCycle.get_time_string()
-
-
-## 获取当前时间段
-func get_current_period() -> DayNightCycle.TimePeriod:
-	return DayNightCycle.current_period

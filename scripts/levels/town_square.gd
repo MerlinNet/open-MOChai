@@ -19,7 +19,7 @@ signal player_spawned(spawn_position: Vector2)
 @onready var player: Node2D = $Player
 @onready var touch_controls: CanvasLayer = $TouchControls
 
-var selected_character_skin: String = "默认冒险者"
+var selected_character_skin: String = "晨星"
 var _character_select_layer: CanvasLayer
 var _character_option_button: OptionButton
 
@@ -71,9 +71,10 @@ func _show_character_select_ui() -> void:
 	vb.add_child(title)
 
 	_character_option_button = OptionButton.new()
-	_character_option_button.add_item("默认冒险者")
-	_character_option_button.add_item("幽灵")
-	_character_option_button.add_item("萌妹")
+	_character_option_button.add_item("晨星")
+	_character_option_button.add_item("夜岚")
+	_character_option_button.add_item("樱歌")
+	_character_option_button.add_item("绯桃")
 	vb.add_child(_character_option_button)
 
 	var confirm_button := Button.new()

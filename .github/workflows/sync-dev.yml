@@ -8,6 +8,15 @@ on:
       - 'docs/**'
       - '.github/**'
   workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Source branch to sync into dev'
+        required: true
+        default: 'moyi'
+        type: choice
+        options:
+          - moyi
+          - chai-jrpg-dev
 
 concurrency:
   group: sync-dev
@@ -46,7 +55,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "branch=manual" >> "$GITHUB_OUTPUT"
+            echo "branch=${{ github.event.inputs.source_branch }}" >> "$GITHUB_OUTPUT"
           else
             echo "branch=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
@@ -59,11 +68,6 @@ jobs:
           git pull --ff-only origin dev
 
           SOURCE="${{ steps.source.outputs.branch }}"
-          if [ "$SOURCE" = "manual" ]; then
-            echo "手动触发，跳过合并"
-            echo "merged=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
 
           if git merge origin/$SOURCE --no-ff -m "chore: merge $SOURCE into dev [skip ci]"; then
             echo "merged=true" >> "$GITHUB_OUTPUT"

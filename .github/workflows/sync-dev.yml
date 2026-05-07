@@ -90,17 +90,67 @@ jobs:
 
       - name: Sync dev back to source branches
         if: steps.merge.outputs.conflict != 'true'
+        id: backsync
         run: |
           set -euo pipefail
-          git checkout moyi
-          git pull --ff-only origin moyi
-          git merge origin/dev -m "chore: sync dev to moyi [skip ci]"
-          git push origin moyi
+          had_conflict=false
+          : > backsync-conflicts.txt
 
-          git checkout chai-jrpg-dev
-          git pull --ff-only origin chai-jrpg-dev
-          git merge origin/dev -m "chore: sync dev to chai-jrpg-dev [skip ci]"
-          git push origin chai-jrpg-dev
+          sync_branch() {
+            local branch="$1"
+            git checkout "$branch"
+            git pull --ff-only origin "$branch"
+
+            if git merge origin/dev -m "chore: sync dev to $branch [skip ci]"; then
+              git push origin "$branch"
+            else
+              had_conflict=true
+              {
+                echo "[$branch]"
+                git diff --name-only --diff-filter=U || true
+                echo
+              } >> backsync-conflicts.txt
+              git merge --abort || true
+            fi
+          }
+
+          sync_branch moyi
+          sync_branch chai-jrpg-dev
+
+          if [ "$had_conflict" = true ]; then
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Upload backsync conflict files
+        if: failure() && steps.backsync.outputs.conflict == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backsync-conflict-files
+          path: backsync-conflicts.txt
+          if-no-files-found: ignore
+
+      - name: Notify on backsync conflict
+        if: failure() && steps.backsync.outputs.conflict == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ dev 回写分支失败 - 需要手动解决冲突',
+              body: `
+                ## 回写冲突
+
+                - **源分支**: \`dev\`
+                - **目标分支**: \`moyi / chai-jrpg-dev\`
+                - **触发者**: @${{ github.actor }}
+
+                已上传冲突文件列表 artifact：\`backsync-conflict-files\`。
+                请手动解决冲突后重新触发。
+              `,
+              labels: ['conflict', 'dev-sync']
+            })
 
       - name: Notify on conflict
         if: failure() && steps.merge.outputs.conflict == 'true'

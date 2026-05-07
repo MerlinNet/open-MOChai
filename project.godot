@@ -21,7 +21,6 @@ config/icon="res://icon.svg"
 GameLogger="*res://scripts/singletons/logger.gd"
 InputManager="*res://scripts/singletons/input_manager.gd"
 GameManager="*res://scripts/singletons/game_manager.gd"
-DayNightCycle="*res://scripts/singletons/day_night_cycle.gd"
 
 [editor_plugins]
 

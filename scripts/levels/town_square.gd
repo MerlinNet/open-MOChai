@@ -18,10 +18,6 @@ signal player_spawned(spawn_position: Vector2)
 @onready var background: Sprite2D = $Background
 @onready var player: Node2D = $Player
 @onready var touch_controls: CanvasLayer = $TouchControls
-@onready var lights_node: Node2D = $Lights
-@onready var sun_light: DirectionalLight2D = $SunLight
-@onready var ambient_light: PointLight2D = $Lights/AmbientLight
-@onready var night_overlay: Control = $NightOverlay
 
 # NPC 位置字典 (供外部查询)
 var npc_positions: Dictionary = {}
@@ -45,7 +41,6 @@ func _ready() -> void:
 	_print_scene_info()
 	_setup_player()
 	_connect_touch_controls()
-	_setup_day_night_cycle()
 	GameLogger.info("TownSquare", "城镇广场已加载")
 	GameLogger.debug("TownSquare", "玩家出生点: %s" % get_spawn_position())
 

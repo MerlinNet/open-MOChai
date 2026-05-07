@@ -8,6 +8,15 @@ on:
       - 'docs/**'
       - '.github/**'
   workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Source branch to sync into dev'
+        required: true
+        default: 'moyi'
+        type: choice
+        options:
+          - moyi
+          - chai-jrpg-dev
 
 concurrency:
   group: sync-dev
@@ -15,106 +24,152 @@ concurrency:
 
 jobs:
   sync-to-dev:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+      issues: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Configure Git
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      
+
       - name: Fetch all branches
         run: |
+          set -euo pipefail
           git fetch origin dev
           git fetch origin moyi
           git fetch origin chai-jrpg-dev
-      
+
       - name: Determine source branch
         id: source
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "branch=manual" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "branch=${{ github.event.inputs.source_branch }}" >> "$GITHUB_OUTPUT"
           else
-            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "branch=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
-      
+
       - name: Merge source into dev
         id: merge
         run: |
+          set -euo pipefail
           git checkout dev
-          git pull origin dev
-          
+          git pull --ff-only origin dev
+
           SOURCE="${{ steps.source.outputs.branch }}"
-          if [ "$SOURCE" == "manual" ]; then
-            echo "手动触发，跳过合并"
-            exit 0
-          fi
-          
-          # 合并源分支到 dev
+
           if git merge origin/$SOURCE --no-ff -m "chore: merge $SOURCE into dev [skip ci]"; then
-            echo "merged=true" >> $GITHUB_OUTPUT
+            echo "merged=true" >> "$GITHUB_OUTPUT"
             git push origin dev
           else
-            # 自动解决冲突：优先保留两边更改
-            git checkout --theirs . || true
-            git add -A
-            git commit -m "chore: merge $SOURCE into dev (auto-resolved) [skip ci]"
-            echo "merged=true" >> $GITHUB_OUTPUT
-            echo "conflict=true" >> $GITHUB_OUTPUT
-            git push origin dev
+            git diff --name-only --diff-filter=U > conflict-files.txt || true
+            git merge --abort || true
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            exit 1
           fi
-      
+
+      - name: Upload conflict files
+        if: failure() && steps.merge.outputs.conflict == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-dev-conflict-files
+          path: conflict-files.txt
+          if-no-files-found: ignore
+
       - name: Sync dev back to source branches
+        if: steps.merge.outputs.conflict != 'true'
+        id: backsync
         run: |
-          # 同步到 moyi
-          git checkout moyi
-          git pull origin moyi
-          if git merge origin/dev -m "chore: sync dev to moyi [skip ci]"; then
-            git push origin moyi
-          else
-            git checkout --theirs . || true
-            git add -A
-            git commit -m "chore: sync dev to moyi (auto-resolved) [skip ci]"
-            git push origin moyi
+          set -euo pipefail
+          had_conflict=false
+          : > backsync-conflicts.txt
+
+          sync_branch() {
+            local branch="$1"
+            git checkout "$branch"
+            git pull --ff-only origin "$branch"
+
+            if git merge origin/dev -m "chore: sync dev to $branch [skip ci]"; then
+              git push origin "$branch"
+            else
+              had_conflict=true
+              {
+                echo "[$branch]"
+                git diff --name-only --diff-filter=U || true
+                echo
+              } >> backsync-conflicts.txt
+              git merge --abort || true
+            fi
+          }
+
+          sync_branch moyi
+          sync_branch chai-jrpg-dev
+
+          if [ "$had_conflict" = true ]; then
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            exit 1
           fi
-          
-          # 同步到 chai-jrpg-dev
-          git checkout chai-jrpg-dev
-          git pull origin chai-jrpg-dev
-          if git merge origin/dev -m "chore: sync dev to chai-jrpg-dev [skip ci]"; then
-            git push origin chai-jrpg-dev
-          else
-            git checkout --theirs . || true
-            git add -A
-            git commit -m "chore: sync dev to chai-jrpg-dev (auto-resolved) [skip ci]"
-            git push origin chai-jrpg-dev
-          fi
-      
-      - name: Notify on conflict
-        if: steps.merge.outputs.conflict == 'true'
+
+      - name: Upload backsync conflict files
+        if: failure() && steps.backsync.outputs.conflict == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backsync-conflict-files
+          path: backsync-conflicts.txt
+          if-no-files-found: ignore
+
+      - name: Notify on backsync conflict
+        if: failure() && steps.backsync.outputs.conflict == 'true'
         uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: '⚠️ 合并冲突已自动解决',
+              title: '⚠️ dev 回写分支失败 - 需要手动解决冲突',
               body: `
-                ## 自动解决冲突
-                
-                - **源分支**: `${{ steps.source.outputs.branch }}`
-                - **目标分支**: `dev`
+                ## 回写冲突
+
+                - **源分支**: \`dev\`
+                - **目标分支**: \`moyi / chai-jrpg-dev\`
                 - **触发者**: @${{ github.actor }}
-                
-                冲突已自动处理，请检查合并结果。
+
+                已上传冲突文件列表 artifact：\`backsync-conflict-files\`。
+                请手动解决冲突后重新触发。
               `,
-              labels: ['conflict', 'auto-merge']
+              labels: ['conflict', 'dev-sync']
+            })
+
+      - name: Notify on conflict
+        if: failure() && steps.merge.outputs.conflict == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ 合并到 dev 失败 - 需要手动解决冲突',
+              body: `
+                ## 合并冲突
+
+                - **源分支**: \`${{ steps.source.outputs.branch }}\`
+                - **目标分支**: \`dev\`
+                - **触发者**: @${{ github.actor }}
+
+                已上传冲突文件列表 artifact：\`sync-dev-conflict-files\`。
+                请手动解决冲突后重新触发。
+              `,
+              labels: ['conflict', 'dev-sync']
             })

@@ -11,12 +11,13 @@ signal died
 
 # 常量
 const MAX_HEALTH: int = 100
+const CHARACTER_SKIN_NAMES := ["默认冒险者", "幽灵", "萌妹"]
 
 # 导出属性
 @export var speed: float = 200.0
 @export_range(0.1, 1.0) var acceleration: float = 0.15
 @export_range(0.1, 1.0) var friction: float = 0.2
-@export_enum("默认冒险者", "幽灵", "萌妹") var character_skin: String = "默认冒险者"
+@export_enum("默认冒险者", "幽灵", "萌妹") var character_skin_index: int = 0
 
 # 公共变量
 var health: int = MAX_HEALTH
@@ -40,7 +41,7 @@ var touch_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_initialize()
-	_apply_character_skin(character_skin)
+	_apply_character_skin(CHARACTER_SKIN_NAMES[clamp(character_skin_index, 0, CHARACTER_SKIN_NAMES.size() - 1)])
 	# 俯视角模式：无重力，自由四方向移动
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	# 碰撞层和掩码 (层1=玩家, 层2=敌人, 层3=环境, 层4=收集品)
@@ -57,7 +58,7 @@ func _apply_character_skin(skin_name: String) -> void:
 		return
 
 	var sprite_frames := SpriteFrames.new()
-	for n in PackedStringArray(["down", "left", "right", "up"]):
+	for n in ["down", "left", "right", "up"]:
 		sprite_frames.add_animation(n)
 
 	match skin_name:
@@ -99,8 +100,11 @@ func _add_two_frame_direction(frames: SpriteFrames, animation_name: String, path
 
 
 func set_character_skin(skin_name: String) -> void:
-	character_skin = skin_name
-	_apply_character_skin(character_skin)
+	var idx := CHARACTER_SKIN_NAMES.find(skin_name)
+	if idx == -1:
+		idx = 0
+	character_skin_index = idx
+	_apply_character_skin(CHARACTER_SKIN_NAMES[character_skin_index])
 
 func _enable_glow(enabled: bool) -> void:
 	if player_glow:
